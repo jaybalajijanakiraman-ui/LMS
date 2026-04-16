@@ -8,6 +8,9 @@ const ROOT = __dirname;
 const DB_PATH = path.join(ROOT, 'db.json');
 const BACKUP_DIR = path.join(ROOT, 'backups');
 const PORT = process.env.PORT || 3000;
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Library server running at http://localhost:${PORT}`);
+});
 
 const MIME_TYPES = {
   '.css': 'text/css; charset=utf-8',
