@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Vemu Institute of Technology - Central Library Management System Gateway Portal">
+    <meta name="theme-color" content="#1e3a8a">
+    <title>Library Gateway - Vemu Institute of Technology (Autonomous)</title>
+            <style>
+/* ============================================
+   CSS DESIGN TOKENS & VARIABLES
+   ============================================ */
+:root {
+    --color-primary: #1e3a8a;
+    --color-primary-dark: #0f172a;
+    --color-primary-light: #3b82f6;
+    --color-accent-gold: #fbbf24;
+    --color-accent-dark: #d97706;
+    --color-background: #f8fafc;
+    --color-surface: #ffffff;
+    --color-border: #e2e8f0;
+    --color-text-primary: #0f172a;
+    --color-text-secondary: #475569;
+    --color-text-light: #64748b;
+    --color-text-white: #ffffff;
+    --color-success: #10b981;
+    --color-error: #ef4444;
+    --color-warning: #f59e0b;
+    --color-info: #0ea5e9;
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 48px;
+    --spacing-3xl: 64px;
+    --spacing-4xl: 96px;
+    --font-family-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    --font-family-display: 'Georgia', 'Garamond', serif;
+    --font-size-xs: 12px;
+    --font-size-sm: 14px;
+    --font-size-base: 16px;
+    --font-size-lg: 18px;
+    --font-size-xl: 24px;
+    --font-size-2xl: 32px;
+    --font-size-3xl: 48px;
+    --font-size-4xl: 64px;
+    --line-height-tight: 1.2;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.75;
+    --line-height-loose: 2;
+    --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.15);
+    --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.2);
+    --shadow-2xl: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-2xl: 24px;
+    --radius-full: 9999px;
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   GLOBAL STYLES & RESET
+   ============================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+    color: var(--color-text-primary);
+    background-color: var(--color-background);
+    overflow-x: hidden;
+}
+
+body.modal-open { overflow: hidden; }
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: var(--line-height-tight);
+    margin-bottom: var(--spacing-md);
+}
+h1 { font-size: var(--font-size-4xl); font-family: var(--font-family-display); }
+h2 { font-size: var(--font-size-3xl); font-family: var(--font-family-display); }
+h3 { font-size: var(--font-size-2xl); }
+h4 { font-size: var(--font-size-xl); }
+
+p {
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+}
+
+a { color: var(--color-primary-light); text-decoration: none; transition: color var(--transition-fast); }
+a:hover { color: var(--color-accent-gold); }
+ul { list-style: none; }
+
+/* ============================================
+   BUTTON STYLES
+   ============================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    font-family: var(--font-family-primary);
+    border: none;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-decoration: none;
+    white-space: nowrap;
+    user-select: none;
+    outline: none;
+}
+.btn:active { transform: scale(0.98); }
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+    color: var(--color-text-white);
+    box-shadow: var(--shadow-md);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); color: var(--color-text-white); }
+.btn-primary:focus { box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.15); }
+
+.btn-secondary {
+    background: transparent;
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+}
+.btn-secondary:hover { background: var(--color-primary); color: var(--color-text-white); }
+
+.btn-accent { background: var(--color-accent-gold); color: var(--color-text-primary); box-shadow: var(--shadow-md); }
+.btn-accent:hover { background: var(--color-accent-dark); color: var(--color-text-white); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+
+.btn-large { padding: var(--spacing-lg) var(--spacing-2xl); font-size: var(--font-size-lg); font-weight: 700; }
+
+/* ============================================
+   CONTAINER & LAYOUT
+   ============================================ */
+.container { max-width: 1280px; margin: 0 auto; padding: 0 var(--spacing-md); }
+
+/* ============================================
+   HEADER & NAVIGATION
+   ============================================ */
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    transition: all var(--transition-normal);
+    box-shadow: none;
+}
+header.scrolled { border-bottom-color: rgba(30, 58, 138, 0.15); box-shadow: var(--shadow-md); }
+
+.nav-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) 0;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-white);
+    font-weight: 700;
+    font-size: var(--font-size-lg);
+}
+
+.nav-menu { display: flex; gap: var(--spacing-2xl); align-items: center; list-style: none; }
+.nav-menu a { font-size: var(--font-size-sm); font-weight: 500; color: var(--color-text-secondary); padding: var(--spacing-sm) 0; border-bottom: 2px solid transparent; transition: all var(--transition-fast); }
+.nav-menu a:hover { color: var(--color-primary); border-bottom-color: var(--color-accent-gold); }
+.nav-login { margin-left: var(--spacing-xl); }
+
+/* ============================================
+   MOBILE MENU TOGGLE
+   ============================================ */
+.menu-toggle { display: none; flex-direction: column; gap: 6px; background: none; border: none; cursor: pointer; padding: var(--spacing-sm); }
+.menu-toggle span { width: 24px; height: 2px; background: var(--color-primary); transition: all var(--transition-normal); transform-origin: center; }
+.menu-toggle.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.menu-toggle.active span:nth-child(2) { opacity: 0; }
+.menu-toggle.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+/* ============================================
+   HERO SECTION
+   ============================================ */
+.hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: var(--spacing-3xl) var(--spacing-md);
+    background: linear-gradient(135deg, var(--color-background) 0%, rgba(59, 130, 246, 0.05) 100%);
+    overflow: hidden;
+}
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; right: -10%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: float 8s ease-in-out infinite;
+}
+.hero::after {
+    content: '';
+    position: absolute;
+    bottom: -50%; left: -10%;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(30, 58, 138, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: float 10s ease-in-out infinite 2s;
+}
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(30px); }
+}
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    animation: slideInUp 0.8s ease-out;
+}
+@keyframes slideInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.hero h1 {
+    font-size: clamp(var(--font-size-3xl), 8vw, var(--font-size-4xl));
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+    line-height: var(--line-height-tight);
+}
+.hero .subtitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-2xl);
+    line-height: var(--line-height-relaxed);
+}
+.hero-actions { display: flex; gap: var(--spacing-lg); justify-content: center; flex-wrap: wrap; }
+
+/* ============================================
+   MODAL STYLES
+   ============================================ */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 1001;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-normal);
+    backdrop-filter: blur(4px);
+}
+.modal-overlay.visible { opacity: 1; visibility: visible; }
+
+.modal-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1002;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+.modal-container.visible { pointer-events: auto; opacity: 1; }
+
+.modal-content {
+    background: var(--color-surface);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-2xl);
+    position: relative;
+    max-width: 900px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: scaleIn 0.3s ease-out;
+}
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.modal-close {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    width: 40px; height: 40px;
+    border: none;
+    background: var(--color-background);
+    color: var(--color-text-primary);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    z-index: 1003;
+}
+.modal-close:hover { background: var(--color-border); }
+.modal-close:focus { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+.modal-close svg { width: 24px; height: 24px; }
+
+.modal-body {
+    padding: var(--spacing-2xl);
+    animation: slideInUp 0.4s ease-out 0.1s backwards;
+}
+
+/* Modal Header (inside loaded content) */
+.modal-header {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+    padding: var(--spacing-2xl) var(--spacing-2xl) var(--spacing-xl);
+    border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+    color: var(--color-text-white);
+}
+.modal-header h1 {
+    color: var(--color-text-white);
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--spacing-sm);
+}
+.modal-header p { color: rgba(255,255,255,0.85); margin-bottom: 0; }
+
+/* Modal Body Typography */
+.modal-body h1, .modal-body h2 { color: var(--color-primary); margin-bottom: var(--spacing-lg); }
+.modal-body h3 { color: var(--color-primary-dark); margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md); }
+.modal-body p { margin-bottom: var(--spacing-md); }
+.modal-body ul { margin-left: var(--spacing-lg); margin-bottom: var(--spacing-lg); }
+.modal-body li { margin-bottom: var(--spacing-sm); color: var(--color-text-secondary); }
+.modal-body li::before { content: '✓ '; color: var(--color-success); font-weight: bold; margin-right: var(--spacing-sm); }
+
+/* Feature Grid */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--spacing-lg);
+    margin: var(--spacing-xl) 0;
+}
+.feature-card {
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    transition: all var(--transition-normal);
+}
+.feature-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--color-primary-light); }
+.feature-card h4 { font-size: var(--font-size-base); color: var(--color-primary); margin-bottom: var(--spacing-sm); }
+.feature-card p { font-size: var(--font-size-sm); margin-bottom: 0; }
+
+/* Highlight Box */
+.highlight-box {
+    background: rgba(59, 130, 246, 0.08);
+    border-left: 4px solid var(--color-primary-light);
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    padding: var(--spacing-lg);
+    margin: var(--spacing-xl) 0;
+}
+.highlight-box p { margin-bottom: 0; color: var(--color-text-primary); }
+
+/* Stats Card */
+.modal-body .stats-card {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-2xl);
+    color: var(--color-text-white);
+    margin: var(--spacing-2xl) 0;
+}
+.modal-body .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+.modal-body .stat-item { text-align: center; }
+.modal-body .stat-number { font-size: var(--font-size-3xl); font-weight: 700; color: var(--color-accent-gold); margin-bottom: var(--spacing-sm); }
+.modal-body .stat-label { font-size: var(--font-size-sm); color: rgba(255,255,255,0.9); text-transform: uppercase; letter-spacing: 1px; }
+
+/* Contact Section */
+.contact-section { margin: var(--spacing-xl) 0; }
+.modal-body .contact-item { display: flex; gap: var(--spacing-lg); margin-bottom: var(--spacing-lg); align-items: flex-start; }
+.modal-body .contact-icon {
+    width: 48px; height: 48px;
+    background: var(--color-accent-gold);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+    font-size: var(--font-size-xl);
+    flex-shrink: 0;
+}
+.modal-body .contact-item h4 { margin-bottom: var(--spacing-sm); color: var(--color-primary); }
+.modal-body .contact-item p { margin-bottom: 0; color: var(--color-text-secondary); }
+
+/* Form Section */
+.form-section {
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    margin: var(--spacing-xl) 0;
+}
+.modal-body .form-group { margin-bottom: var(--spacing-lg); }
+.modal-body .form-group label {
+    display: block;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.modal-body .form-group input,
+.modal-body .form-group textarea {
+    width: 100%;
+    padding: var(--spacing-md);
+    font-size: var(--font-size-base);
+    font-family: var(--font-family-primary);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    transition: all var(--transition-fast);
+    outline: none;
+}
+.modal-body .form-group input:focus,
+.modal-body .form-group textarea:focus {
+    border-color: var(--color-primary);
+    background: var(--color-surface);
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+}
+.modal-body .form-group textarea { resize: vertical; min-height: 100px; }
+
+/* ============================================
+   FOOTER
+   ============================================ */
+footer {
+    background: var(--color-primary);
+    color: var(--color-text-white);
+    padding: var(--spacing-3xl) var(--spacing-md);
+    text-align: center;
+}
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-2xl);
+    margin-bottom: var(--spacing-2xl);
+}
+.footer-section h4 { color: var(--color-accent-gold); margin-bottom: var(--spacing-md); }
+.footer-section ul { list-style: none; }
+.footer-section ul li { margin-bottom: var(--spacing-sm); }
+.footer-section ul li a { color: rgba(255,255,255,0.8); }
+.footer-section ul li a:hover { color: var(--color-accent-gold); }
+.footer-section p { color: rgba(255,255,255,0.8); }
+.footer-bottom { padding-top: var(--spacing-2xl); border-top: 1px solid rgba(255,255,255,0.1); font-size: var(--font-size-sm); color: rgba(255,255,255,0.7); }
+
+.social-links { display: flex; gap: var(--spacing-lg); justify-content: center; margin: var(--spacing-lg) 0; }
+.social-link {
+    width: 40px; height: 40px;
+    border: 2px solid var(--color-accent-gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    color: var(--color-accent-gold);
+}
+.social-link:hover { background: var(--color-accent-gold); color: var(--color-primary); }
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 768px) {
+    .nav-menu { gap: var(--spacing-lg); }
+    .nav-menu a { font-size: var(--font-size-xs); }
+    .hero-actions { gap: var(--spacing-md); }
+    .btn { padding: var(--spacing-md) var(--spacing-lg); font-size: var(--font-size-sm); }
+    .btn-large { padding: var(--spacing-md) var(--spacing-lg); font-size: var(--font-size-base); }
+    .hero { min-height: 80vh; padding: var(--spacing-2xl) var(--spacing-md); }
+    .modal-body { padding: var(--spacing-lg); }
+    .modal-body .stats-grid { grid-template-columns: 1fr; }
+    .modal-close { width: 36px; height: 36px; }
+}
+
+@media (max-width: 600px) {
+    .menu-toggle { display: flex; }
+    .nav-menu { display: none; }
+    .hero h1 { font-size: var(--font-size-2xl); }
+    .hero .subtitle { font-size: var(--font-size-base); }
+    h2 { font-size: var(--font-size-2xl); }
+    h3 { font-size: var(--font-size-xl); }
+    .logo-icon { width: 32px; height: 32px; font-size: var(--font-size-base); }
+    .logo { font-size: var(--font-size-lg); }
+    .modal-content { width: 95%; }
+    .modal-body { padding: var(--spacing-md); }
+    .modal-close { top: var(--spacing-md); right: var(--spacing-md); }
+    .feature-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+.visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border-width: 0;
+}
+:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+@media print {
+    header, .modal-overlay, .modal-container, footer { display: none; }
+    body { background: white; color: black; }
+}
+    </style>
+</head>
+<body>
+
+    <!-- ============================================
+         HEADER & NAVIGATION
+         ============================================ -->
+    <header id="header">
+        <div class="container">
+            <nav class="nav-wrapper">
+                <a href="#" class="logo" onclick="location.reload(); return false;">
+                    <div class="logo-icon">📚</div>
+                    <span>Vemu Library</span>
+                </a>
+
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#" data-modal="overview" class="nav-link modal-trigger">Overview</a></li>
+                    <li><a href="#" data-modal="about" class="nav-link modal-trigger">About Us</a></li>
+                    <li><a href="#" data-modal="contact" class="nav-link modal-trigger">Contact</a></li>
+                    <li class="nav-login">
+                        <a href="log.html" class="btn btn-primary">Login Portal</a>
+                    </li>
+                </ul>
+
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- ============================================
+             HERO SECTION
+             ============================================ -->
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <h1>Knowledge Without Boundaries</h1>
+                <p class="subtitle">
+                    Discover Vemu Institute's commitment to academic excellence through our autonomous
+                    library management system. Access thousands of volumes, journals, and digital resources
+                    designed to support your academic journey.
+                </p>
+                <div class="hero-actions">
+                    <a href="log.html" class="btn btn-primary btn-large">Access Library Portal</a>
+                    <a href="#" data-modal="overview" class="btn btn-secondary btn-large modal-trigger">Learn More</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ============================================
+         MODAL CONTAINER
+         ============================================ -->
+    <div id="modalOverlay" class="modal-overlay" role="presentation" aria-hidden="true"></div>
+    <div id="modalContainer" class="modal-container" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true" tabindex="-1">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose" aria-label="Close modal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div id="modalBody">
+                <!-- Content loaded dynamically from inline templates -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         INLINE MODAL CONTENT TEMPLATES
+         ============================================ -->
+    <template id="tpl-overview">
+        <div class="modal-header">
+            <div>
+                <h1>Library Overview</h1>
+                <p>Your Gateway to Knowledge and Academic Excellence</p>
+            </div>
+        </div>
+        <div class="modal-body">
+            <p>
+                Welcome to the Vemu Institute of Technology Central Library - your gateway to academic excellence
+                and knowledge discovery. Our state-of-the-art library infrastructure is designed to support the
+                educational and research needs of our students, faculty, and researchers.
+            </p>
+            <div class="highlight-box">
+                <p>💡 <strong>Our library is open 24/7 for digital resources!</strong> Access our e-books, journals, and databases anytime, anywhere.</p>
+            </div>
+            <h2>Our Mission</h2>
+            <p>
+                To provide comprehensive library services and resources that facilitate learning, teaching, and
+                research while promoting intellectual growth and academic excellence within the Vemu community.
+            </p>
+            <h3>Key Highlights</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>📚 Extensive Collection</h4>
+                    <p>Over 55,000 book volumes covering diverse disciplines and research areas.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🌐 Digital Resources</h4>
+                    <p>Access to 50,000+ e-books, journals, and comprehensive databases.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>👨‍💼 Expert Support</h4>
+                    <p>Dedicated librarians available for research guidance and consultation.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🏢 Modern Facilities</h4>
+                    <p>Reading rooms, computer labs, and collaborative study spaces.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>⏰ Always Available</h4>
+                    <p>24/7 access to digital resources for your convenience.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📖 Specialized Collections</h4>
+                    <p>Technical, engineering, and humanities materials for all needs.</p>
+                </div>
+            </div>
+            <h3>Services Available</h3>
+            <ul>
+                <li>Book borrowing and renewal services with convenient checkout options</li>
+                <li>Inter-library loan programs for access to resources beyond our collection</li>
+                <li>Research assistance and personalized database training sessions</li>
+                <li>Document scanning and digitization services</li>
+                <li>Library orientation and information literacy programs</li>
+                <li>Exclusive access to academic journals and online databases</li>
+            </ul>
+            <h3>Why Choose Vemu Library?</h3>
+            <p>
+                Our dedicated team of librarians and support staff are committed to enhancing your academic
+                experience and ensuring you have access to the resources you need to succeed.
+            </p>
+            <ul>
+                <li>Personalized research assistance tailored to your needs</li>
+                <li>Access to the latest academic and professional resources</li>
+                <li>Comfortable and technology-rich learning environment</li>
+                <li>Flexible borrowing policies to support your academic journey</li>
+                <li>Expert guidance in navigating complex information landscapes</li>
+            </ul>
+            <p style="margin-top: var(--spacing-2xl); padding: var(--spacing-lg); background: rgba(59,130,246,0.05); border-radius: var(--radius-lg); font-size: var(--font-size-sm);">
+                📞 Need assistance? Contact our library team at <strong>library@vemu.org</strong> or visit us on campus!
+            </p>
+        </div>
+    </template>
+
+    <template id="tpl-about">
+        <div class="modal-header">
+            <div>
+                <h1>About Our Library</h1>
+                <p>Building Excellence Through Knowledge and Innovation</p>
+            </div>
+        </div>
+        <div class="modal-body">
+            <p>
+                Vemu Institute of Technology's Central Library stands as a pillar of academic excellence,
+                serving the institution since its inception. With a commitment to continuous improvement and
+                innovation, we have evolved to meet the changing needs of our academic community.
+            </p>
+            <h2>Library Facilities &amp; Infrastructure</h2>
+            <p>
+                Our modern library building features state-of-the-art infrastructure with comfortable reading areas,
+                high-speed internet connectivity, and advanced information technology resources. We maintain an
+                environment conducive to learning, research, and intellectual exchange.
+            </p>
+            <div class="stats-card">
+                <h3 style="text-align:center; margin-bottom:var(--spacing-lg); color:var(--color-text-white);">📊 Library by Numbers</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">55K+</div>
+                        <div class="stat-label">Book Volumes</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">2K+</div>
+                        <div class="stat-label">Print Journals</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">10K+</div>
+                        <div class="stat-label">Digital Theses</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">50K+</div>
+                        <div class="stat-label">E-Resources</div>
+                    </div>
+                </div>
+            </div>
+            <h3>Collections &amp; Resources</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>📖 Print Collections</h4>
+                    <p>Comprehensive coverage of engineering, technology, and management disciplines.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>💻 Electronic Resources</h4>
+                    <p>Online journals, e-books, databases, and multimedia materials.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🎓 Special Collections</h4>
+                    <p>Theses, dissertations, and institutional repositories.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📚 Reference Materials</h4>
+                    <p>Encyclopedias, handbooks, and comprehensive research guides.</p>
+                </div>
+            </div>
+            <h2>Advanced Technology Infrastructure</h2>
+            <p>Our library is equipped with cutting-edge technology to support your academic and research needs:</p>
+            <ul>
+                <li>High-speed Wi-Fi available throughout the building for seamless connectivity</li>
+                <li>Modern computer terminals and workstations with latest software</li>
+                <li>Advanced cataloguing and sophisticated library management systems</li>
+                <li>Video conferencing and virtual meeting facilities for remote collaboration</li>
+                <li>Multimedia production equipment for research and presentation projects</li>
+                <li>Secure and privacy-protected study environments</li>
+            </ul>
+            <h2>Professional &amp; Dedicated Staff</h2>
+            <p>Our team of qualified librarians and support staff are committed to providing excellent service and supporting your academic and research endeavors.</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>🎯 Personalized Assistance</h4>
+                    <p>Expert guidance tailored to your specific research needs and academic goals.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📚 Training Sessions</h4>
+                    <p>Comprehensive database training and information literacy programs.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔍 Research Support</h4>
+                    <p>In-depth consultation for thesis, dissertation, and research projects.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>💡 Expert Guidance</h4>
+                    <p>Navigate complex information landscapes with our expert recommendations.</p>
+                </div>
+            </div>
+            <h2>Commitment to Excellence</h2>
+            <div class="highlight-box">
+                <p><strong>🏆 Our Promise:</strong> We continuously update our collections with the latest publications and research materials to ensure you have access to cutting-edge academic resources that support your success.</p>
+            </div>
+            <h3>Vision for the Future</h3>
+            <ul>
+                <li>Expanding our digital collections and online resources</li>
+                <li>Implementing innovative library technologies and services</li>
+                <li>Creating collaborative learning spaces for group research and study</li>
+                <li>Providing support for emerging research methodologies</li>
+                <li>Fostering information literacy and critical thinking skills</li>
+                <li>Building partnerships with national and international academic institutions</li>
+            </ul>
+        </div>
+    </template>
+
+    <template id="tpl-contact">
+        <div class="modal-header">
+            <div>
+                <h1>Contact Us</h1>
+                <p>We're Here to Assist You With All Your Library Needs</p>
+            </div>
+        </div>
+        <div class="modal-body">
+            <p style="margin-bottom:var(--spacing-lg);">
+                Have questions about our library services? Need research assistance or have suggestions?
+                We're here to help and would love to hear from you!
+            </p>
+            <h2>Get in Touch</h2>
+            <div class="contact-section">
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div>
+                        <h4>Campus Location</h4>
+                        <p>
+                            Vemu Institute of Technology (Autonomous)<br>
+                            P.Kothakota, Chittoor<br>
+                            Andhra Pradesh, India - 517588
+                        </p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <div>
+                        <h4>Email Address</h4>
+                        <p>
+                            <a href="mailto:library@vemu.org" style="font-weight:600; font-size:var(--font-size-base);">library@vemu.org</a><br>
+                            <span style="font-size:var(--font-size-sm); color:var(--color-text-light);">We typically respond within 24 hours</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div>
+                        <h4>Phone Number</h4>
+                        <p>
+                            <a href="tel:+919876543210" style="font-weight:600; font-size:var(--font-size-base);">+91 9876 543210</a><br>
+                            <span style="font-size:var(--font-size-sm); color:var(--color-text-light);">Mon-Fri: 8:00 AM - 5:00 PM</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">🕐</div>
+                    <div>
+                        <h4>Library Hours</h4>
+                        <p>
+                            <strong>Monday - Friday:</strong> 8:00 AM - 8:00 PM<br>
+                            <strong>Saturday:</strong> 9:00 AM - 5:00 PM<br>
+                            <strong>Sunday:</strong> Closed<br>
+                            <strong>Digital Resources:</strong> Available 24/7 ⏰
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <h2>Quick Support Topics</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>🔍 Research Help</h4>
+                    <p>Get expert assistance with thesis, dissertation, and research projects.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📚 Book Access</h4>
+                    <p>Questions about borrowing, renewals, or finding specific resources?</p>
+                </div>
+                <div class="feature-card">
+                    <h4>💻 Technical Support</h4>
+                    <p>Need help accessing online resources or using our digital systems?</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🎓 Training Sessions</h4>
+                    <p>Request personalized database training and information literacy programs.</p>
+                </div>
+            </div>
+            <h2>Send Us a Message</h2>
+            <div class="form-section">
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" required placeholder="Enter your full name" autocomplete="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required placeholder="your.email@example.com" autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject *</label>
+                        <input type="text" id="subject" name="subject" required placeholder="What is your inquiry about?" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message *</label>
+                        <textarea id="message" name="message" required placeholder="Tell us how we can help you..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-large">Send Message</button>
+                </form>
+            </div>
+            <div class="highlight-box">
+                <p><strong>✓ Your Privacy Matters:</strong> All information you provide is secure and used only to respond to your inquiry. We never share your data with third parties.</p>
+            </div>
+            <h3>Frequently Asked Questions</h3>
+            <ul>
+                <li><strong>How do I access online resources?</strong> Visit our portal or email us for login credentials.</li>
+                <li><strong>Can I extend my book borrowing period?</strong> Yes! Renewals can be done online or through our library staff.</li>
+                <li><strong>Do you offer document delivery?</strong> Yes, we can scan and email documents from our collection.</li>
+                <li><strong>How do I book a research consultation?</strong> Contact us via email or phone to schedule an appointment.</li>
+            </ul>
+        </div>
+    </template>
+
+    <!-- ============================================
+         FOOTER
+         ============================================ -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About Vemu Library</h4>
+                    <p style="color:rgba(255,255,255,0.8); margin-bottom:0;">
+                        Committed to providing world-class library services and resources
+                        to support the academic excellence of our institution.
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#" onclick="location.reload(); return false;">Home</a></li>
+                        <li><a href="#" data-modal="about" class="modal-trigger">About Us</a></li>
+                        <li><a href="#" data-modal="contact" class="modal-trigger">Contact</a></li>
+                        <li><a href="log.html">Login Portal</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Digital Collections</a></li>
+                        <li><a href="#">Research Guides</a></li>
+                        <li><a href="#">Database Access</a></li>
+                        <li><a href="#">Library Services</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="social-links">
+                <a href="#" class="social-link" title="Facebook" aria-label="Facebook">f</a>
+                <a href="#" class="social-link" title="Twitter" aria-label="Twitter">𝕏</a>
+                <a href="#" class="social-link" title="Instagram" aria-label="Instagram">📷</a>
+                <a href="#" class="social-link" title="LinkedIn" aria-label="LinkedIn">in</a>
+            </div>
+            <div class="footer-bottom">
+                <p>
+                    &copy; 2024 Vemu Institute of Technology (Autonomous). All rights reserved. |
+                    <a href="#">Privacy Policy</a> |
+                    <a href="#">Terms of Service</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+// ============================================
+// MODAL MANAGEMENT
+// ============================================
+const modalOverlay   = document.getElementById('modalOverlay');
+const modalContainer = document.getElementById('modalContainer');
+const modalBody      = document.getElementById('modalBody');
+const modalClose     = document.getElementById('modalClose');
+
+let currentFocusElement = null;
+let focusableElements   = [];
+let focusIndex          = 0;
+
+// Map modal names to their inline <template> ids
+const MODAL_TEMPLATES = {
+    overview : 'tpl-overview',
+    about    : 'tpl-about',
+    contact  : 'tpl-contact'
+};
+
+// ============================================
+// LOAD MODAL CONTENT (from inline templates)
+// ============================================
+function loadModalContent(modalName) {
+    const tplId = MODAL_TEMPLATES[modalName];
+    const tpl   = tplId ? document.getElementById(tplId) : null;
+
+    if (!tpl) {
+        modalBody.innerHTML = '<p style="color:var(--color-error); padding:var(--spacing-2xl);">Content not found.</p>';
+        return;
+    }
+
+    // Clone template content into modal body
+    modalBody.innerHTML = '';
+    modalBody.appendChild(tpl.content.cloneNode(true));
+
+    // Set accessible label from first heading
+    const title = modalBody.querySelector('h1');
+    if (title) {
+        title.id = 'modal-title';
+        modalContainer.setAttribute('aria-labelledby', 'modal-title');
+    }
+}
+
+// ============================================
+// OPEN MODAL
+// ============================================
+function openModal(modalName) {
+    currentFocusElement = document.activeElement;
+
+    loadModalContent(modalName);
+
+    modalOverlay.classList.add('visible');
+    modalContainer.classList.add('visible');
+    modalContainer.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+
+    document.querySelector('main').setAttribute('aria-hidden', 'true');
+    document.querySelector('footer').setAttribute('aria-hidden', 'true');
+
+    updateFocusableElements();
+
+    modalOverlay.addEventListener('click', closeModal);
+    modalClose.addEventListener('click', closeModal);
+    document.addEventListener('keydown', handleKeydown);
+}
+
+// ============================================
+// CLOSE MODAL
+// ============================================
+function closeModal() {
+    modalOverlay.classList.remove('visible');
+    modalContainer.classList.remove('visible');
+    modalContainer.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+
+    document.querySelector('main').removeAttribute('aria-hidden');
+    document.querySelector('footer').removeAttribute('aria-hidden');
+
+    if (currentFocusElement) currentFocusElement.focus();
+
+    modalOverlay.removeEventListener('click', closeModal);
+    modalClose.removeEventListener('click', closeModal);
+    document.removeEventListener('keydown', handleKeydown);
+}
+
+// ============================================
+// KEYBOARD ACCESSIBILITY
+// ============================================
+function handleKeydown(event) {
+    if (event.key === 'Escape') { closeModal(); return; }
+
+    if (event.key === 'Tab') {
+        event.preventDefault();
+        if (focusableElements.length === 0) return;
+
+        focusIndex = event.shiftKey
+            ? (focusIndex - 1 + focusableElements.length) % focusableElements.length
+            : (focusIndex + 1) % focusableElements.length;
+
+        focusableElements[focusIndex].focus();
+    }
+}
+
+// ============================================
+// UPDATE FOCUSABLE ELEMENTS
+// ============================================
+function updateFocusableElements() {
+    focusableElements = Array.from(
+        modalContainer.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+    );
+    focusIndex = 0;
+    if (focusableElements.length > 0) focusableElements[0].focus();
+}
+
+// ============================================
+// MODAL TRIGGER LISTENERS
+// ============================================
+document.addEventListener('click', (e) => {
+    const trigger = e.target.closest('.modal-trigger');
+    if (trigger) {
+        e.preventDefault();
+        const modalName = trigger.dataset.modal;
+        if (modalName) {
+            // Close mobile menu if open
+            menuToggle.classList.remove('active');
+            navMenu.style.display = '';
+            openModal(modalName);
+        }
+    }
+});
+
+// ============================================
+// HEADER SCROLL EFFECT
+// ============================================
+const header = document.getElementById('header');
+window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 50);
+}, { passive: true });
+
+// ============================================
+// MOBILE MENU TOGGLE
+// ============================================
+const menuToggle = document.getElementById('menuToggle');
+const navMenu    = document.getElementById('navMenu');
+
+menuToggle.addEventListener('click', () => {
+    menuToggle.classList.toggle('active');
+    const isOpen = navMenu.style.display === 'flex';
+    if (isOpen) {
+        navMenu.style.display = '';
+    } else {
+        Object.assign(navMenu.style, {
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'absolute',
+            top: '100%',
+            left: '0',
+            right: '0',
+            gap: '0',
+            background: 'var(--color-surface)',
+            borderTop: '1px solid var(--color-border)',
+            padding: 'var(--spacing-md)',
+            zIndex: '999'
+        });
+    }
+});
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('header')) {
+        menuToggle.classList.remove('active');
+        navMenu.style.display = '';
+    }
+});
+
+// ============================================
+// FORM SUBMISSION
+// ============================================
+document.addEventListener('submit', (e) => {
+    if (e.target.id === 'contactForm') {
+        e.preventDefault();
+        const submitBtn  = e.target.querySelector('button[type="submit"]');
+        const origText   = submitBtn.textContent;
+        submitBtn.textContent = '✓ Message Sent!';
+        submitBtn.disabled    = true;
+        submitBtn.style.background = 'var(--color-success)';
+        e.target.reset();
+        setTimeout(() => {
+            submitBtn.textContent      = origText;
+            submitBtn.disabled         = false;
+            submitBtn.style.background = '';
+        }, 3000);
+    }
+});
+
+// ============================================
+// ACCESSIBILITY: SKIP LINK
+// ============================================
+const skipLink = document.createElement('a');
+skipLink.href      = '#home';
+skipLink.textContent = 'Skip to main content';
+skipLink.className = 'visually-hidden';
+Object.assign(skipLink.style, { position: 'fixed', top: '0', left: '0', zIndex: '10001' });
+skipLink.addEventListener('focus', function () {
+    this.classList.remove('visually-hidden');
+    Object.assign(this.style, {
+        position: 'fixed',
+        padding: 'var(--spacing-md)',
+        background: 'var(--color-primary)',
+        color: 'var(--color-text-white)',
+        textDecoration: 'none'
+    });
+});
+skipLink.addEventListener('blur', function () { this.classList.add('visually-hidden'); });
+document.body.prepend(skipLink);
+
+// ============================================
+// CONSOLE MESSAGE
+// ============================================
+console.log('%c🎓 Welcome to Vemu Library Gateway', 'font-size:24px; color:#1e3a8a; font-weight:bold;');
+console.log('%cBuilt with HTML5, CSS3, and Vanilla JavaScript', 'font-size:14px; color:#475569;');
+console.log('%cFor inquiries: library@vemu.org', 'font-size:12px; color:#64748b;');
+    </script>
+</body>
+</html>
+
+
+
+

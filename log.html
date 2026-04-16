@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library Portal — Login | Vemu Institute of Technology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================
+   TOKENS
+   ============================================ */
+:root {
+  --navy:       #0d1b2a;
+  --navy-2:     #162236;
+  --navy-3:     #1e3352;
+  --gold:       #c9a84c;
+  --gold-light: #e2c47a;
+  --gold-dim:   rgba(201,168,76,.18);
+  --gold-glow:  rgba(201,168,76,.35);
+  --cream:      #f5f0e8;
+  --cream-2:    #ede7d9;
+  --muted:      rgba(245,240,232,.55);
+  --error:      #e05252;
+  --success:    #3dbf8a;
+  --info:       #5aacda;
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'DM Mono', monospace;
+
+  --ease-out:  cubic-bezier(.16,1,.3,1);
+  --ease-snap: cubic-bezier(.34,1.56,.64,1);
+}
+
+/* ============================================
+   RESET & BASE
+   ============================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; font-size: 16px; }
+body {
+  min-height: 100%;
+  font-family: var(--font-body);
+  background: var(--navy);
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ============================================
+   ANIMATED BACKGROUND
+   ============================================ */
+.bg {
+  position: fixed; inset: 0; z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: drift 18s ease-in-out infinite;
+}
+.bg-orb-1 {
+  width: 600px; height: 600px;
+  top: -200px; right: -150px;
+  background: radial-gradient(circle, rgba(201,168,76,.12) 0%, transparent 70%);
+  animation-delay: 0s;
+}
+.bg-orb-2 {
+  width: 500px; height: 500px;
+  bottom: -200px; left: -100px;
+  background: radial-gradient(circle, rgba(30,51,82,.8) 0%, transparent 70%);
+  animation-delay: -6s;
+}
+.bg-orb-3 {
+  width: 350px; height: 350px;
+  top: 40%; left: 30%;
+  background: radial-gradient(circle, rgba(90,172,218,.07) 0%, transparent 70%);
+  animation-delay: -12s;
+}
+@keyframes drift {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33%      { transform: translate(30px,-40px) scale(1.05); }
+  66%      { transform: translate(-20px,30px) scale(.95); }
+}
+
+/* Book-shelf grid lines */
+.bg-lines {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ============================================
+   SPLIT LAYOUT
+   ============================================ */
+.page-wrap {
+  position: relative; z-index: 1;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+}
+
+/* LEFT PANEL */
+.left-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 56px;
+  background: linear-gradient(160deg, var(--navy-2) 0%, var(--navy) 100%);
+  border-right: 1px solid rgba(201,168,76,.12);
+  position: relative;
+  overflow: hidden;
+  animation: panelIn .8s var(--ease-out) both;
+}
+@keyframes panelIn {
+  from { opacity:0; transform: translateX(-30px); }
+  to   { opacity:1; transform: translateX(0); }
+}
+
+.left-logo {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 64px;
+}
+.left-logo-icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 8px 24px var(--gold-glow);
+}
+.left-logo-text {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--cream);
+  line-height: 1.3;
+}
+.left-logo-text span {
+  display: block; font-size: .72rem;
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.left-headline {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.18;
+  color: var(--cream);
+  margin-bottom: 20px;
+}
+.left-headline em {
+  font-style: normal;
+  color: var(--gold);
+}
+.left-tagline {
+  font-size: .95rem;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 380px;
+  margin-bottom: 56px;
+}
+
+.left-stats {
+  display: flex; gap: 36px;
+  flex-wrap: wrap;
+}
+.stat {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+.stat-lbl {
+  font-size: .72rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Decorative book stack */
+.deco-books {
+  position: absolute;
+  bottom: 0; right: -20px;
+  opacity: .06;
+  font-size: 200px;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* RIGHT PANEL */
+.right-panel {
+  width: 480px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 48px;
+  background: rgba(255,255,255,.02);
+  animation: slideUp .7s var(--ease-out) .15s both;
+}
+@keyframes slideUp {
+  from { opacity:0; transform: translateY(24px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* ============================================
+   CARD
+   ============================================ */
+.card {
+  width: 100%;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(201,168,76,.15);
+  border-radius: 24px;
+  padding: 40px 36px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 32px 80px rgba(0,0,0,.4);
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--cream);
+  margin-bottom: 6px;
+}
+.card-sub {
+  font-size: .85rem;
+  color: var(--muted);
+  margin-bottom: 32px;
+}
+
+/* ============================================
+   ROLE SELECTOR
+   ============================================ */
+.roles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+.role-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 14px 10px;
+  background: rgba(255,255,255,.04);
+  border: 1.5px solid rgba(201,168,76,.15);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all .2s var(--ease-out);
+  font-family: var(--font-body);
+  color: var(--muted);
+  font-size: .78rem;
+  font-weight: 500;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+.role-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--gold-dim) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity .2s;
+}
+.role-btn:hover { border-color: rgba(201,168,76,.4); color: var(--gold-light); }
+.role-btn:hover::before { opacity: 1; }
+.role-btn.active {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--gold-dim);
+  box-shadow: 0 0 20px var(--gold-glow);
+}
+.role-btn.active::before { opacity: 1; }
+.role-icon { font-size: 1.4rem; }
+
+/* ============================================
+   FORM STATES (views)
+   ============================================ */
+.view { display: none; }
+.view.active {
+  display: block;
+  animation: fadeUp .35s var(--ease-out) both;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(10px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
+.field {
+  margin-bottom: 18px;
+}
+.field label {
+  display: block;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin-bottom: 8px;
+}
+.field-wrap {
+  position: relative;
+}
+.field-wrap .field-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  font-size: 1rem; opacity: .5; pointer-events: none;
+}
+.field input,
+.field select {
+  width: 100%;
+  padding: 13px 14px 13px 42px;
+  background: rgba(255,255,255,.06);
+  border: 1.5px solid rgba(201,168,76,.2);
+  border-radius: 12px;
+  color: var(--cream);
+  font-family: var(--font-body);
+  font-size: .95rem;
+  outline: none;
+  transition: border-color .2s, background .2s, box-shadow .2s;
+  -webkit-appearance: none;
+}
+.field input::placeholder { color: rgba(245,240,232,.25); }
+.field input:focus,
+.field select:focus {
+  border-color: var(--gold);
+  background: rgba(201,168,76,.08);
+  box-shadow: 0 0 0 3px rgba(201,168,76,.12);
+}
+.field select option { background: var(--navy-2); color: var(--cream); }
+
+/* Password toggle */
+.pwd-toggle {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  color: var(--muted); font-size: .85rem; padding: 4px;
+  transition: color .15s;
+}
+.pwd-toggle:hover { color: var(--gold); }
+
+/* OTP inputs */
+.otp-row {
+  display: flex; gap: 10px; justify-content: center;
+  margin: 8px 0 4px;
+}
+.otp-cell {
+  width: 50px; height: 56px;
+  background: rgba(255,255,255,.06);
+  border: 1.5px solid rgba(201,168,76,.2);
+  border-radius: 12px;
+  color: var(--cream);
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  font-weight: 500;
+  text-align: center;
+  outline: none;
+  transition: border-color .2s, background .2s, box-shadow .2s;
+  caret-color: var(--gold);
+}
+.otp-cell:focus {
+  border-color: var(--gold);
+  background: rgba(201,168,76,.08);
+  box-shadow: 0 0 0 3px rgba(201,168,76,.12);
+}
+.otp-cell.filled {
+  border-color: rgba(201,168,76,.5);
+  color: var(--gold-light);
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  border: none; border-radius: 12px;
+  color: var(--navy);
+  font-family: var(--font-body);
+  font-size: .95rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  cursor: pointer;
+  transition: all .2s var(--ease-out);
+  box-shadow: 0 6px 24px rgba(201,168,76,.3);
+  position: relative; overflow: hidden;
+  margin-top: 6px;
+}
+.btn-primary::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: white;
+  opacity: 0;
+  transition: opacity .15s;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(201,168,76,.45); }
+.btn-primary:hover::after { opacity: .06; }
+.btn-primary:active { transform: scale(.98); }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+.btn-ghost {
+  background: none; border: none;
+  color: var(--gold);
+  font-family: var(--font-body);
+  font-size: .82rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  transition: color .15s, opacity .15s;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: transparent;
+}
+.btn-ghost:hover { color: var(--gold-light); text-decoration-color: var(--gold-light); }
+
+.btn-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: none;
+  color: var(--muted); font-family: var(--font-body);
+  font-size: .82rem; cursor: pointer;
+  padding: 0; transition: color .15s;
+  margin-bottom: 20px;
+}
+.btn-back:hover { color: var(--cream); }
+
+/* ============================================
+   DIVIDER & EXTRAS
+   ============================================ */
+.form-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 16px;
+}
+.form-footer-center {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid rgba(201,168,76,.1);
+  margin: 24px 0;
+}
+
+.helper-text {
+  font-size: .78rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.helper-text strong { color: var(--gold-light); }
+
+/* Progress dots */
+.progress-dots {
+  display: flex; gap: 8px; justify-content: center;
+  margin-bottom: 24px;
+}
+.dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(201,168,76,.2);
+  transition: all .3s;
+}
+.dot.active { background: var(--gold); transform: scale(1.2); }
+.dot.done { background: var(--success); }
+
+/* Alert */
+.alert {
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: .82rem;
+  margin-bottom: 16px;
+  display: none;
+  align-items: flex-start; gap: 8px;
+}
+.alert.show { display: flex; animation: fadeUp .3s var(--ease-out); }
+.alert-error   { background: rgba(224,82,82,.12); border: 1px solid rgba(224,82,82,.3); color: #f5a0a0; }
+.alert-success { background: rgba(61,191,138,.1); border: 1px solid rgba(61,191,138,.3); color: #7ee8c2; }
+.alert-info    { background: rgba(90,172,218,.1); border: 1px solid rgba(90,172,218,.3); color: #a2d9f0; }
+
+/* Resend timer */
+.resend-row {
+  text-align: center;
+  font-size: .8rem;
+  color: var(--muted);
+  margin-top: 12px;
+}
+#resend-btn { color: var(--gold); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+#resend-btn.disabled { opacity: .4; cursor: default; text-decoration: none; pointer-events: none; }
+#otp-timer { font-variant-numeric: tabular-nums; }
+
+/* New-password fields */
+.pwd-strength {
+  height: 4px; border-radius: 99px;
+  background: rgba(255,255,255,.08);
+  margin-top: 8px; overflow: hidden;
+}
+.pwd-strength-bar {
+  height: 100%; border-radius: 99px;
+  transition: width .4s, background .4s;
+  width: 0;
+}
+
+/* Back to site */
+.back-site {
+  text-align: center;
+  margin-top: 22px;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.back-site a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .15s;
+}
+.back-site a:hover { color: var(--gold); }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 960px) {
+  .left-panel { display: none; }
+  .right-panel { width: 100%; padding: 32px 24px; }
+}
+@media (max-width: 480px) {
+  .card { padding: 28px 22px; }
+  .otp-cell { width: 42px; height: 50px; font-size: 1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg">
+  <div class="bg-lines"></div>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+</div>
+
+<div class="page-wrap">
+
+  <!-- ===================== LEFT PANEL ===================== -->
+  <div class="left-panel">
+    <div class="deco-books">📚</div>
+
+    <div class="left-logo">
+      <div class="left-logo-icon">📖</div>
+      <div class="left-logo-text">
+        Vemu Library
+        <span>Institute of Technology (Autonomous)</span>
+      </div>
+    </div>
+
+    <h1 class="left-headline">
+      Your Gateway to<br><em>Infinite Knowledge</em>
+    </h1>
+    <p class="left-tagline">
+      Access thousands of volumes, research journals, e-books,
+      and digital resources curated for academic excellence.
+    </p>
+
+    <div class="left-stats">
+      <div class="stat">
+        <span class="stat-num">55K+</span>
+        <span class="stat-lbl">Book Volumes</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">50K+</span>
+        <span class="stat-lbl">E-Resources</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">24/7</span>
+        <span class="stat-lbl">Digital Access</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== RIGHT PANEL ===================== -->
+  <div class="right-panel">
+    <div class="card">
+
+      <!-- ======= VIEW: LOGIN ======= -->
+      <div class="view active" id="view-login">
+
+        <h2 class="card-title">Welcome Back</h2>
+        <p class="card-sub">Sign in to your library account</p>
+
+        <!-- Role Selector -->
+        <div class="roles" id="role-selector">
+          <button class="role-btn" data-role="administrator" onclick="setRole(this)">
+            <span class="role-icon">🛡️</span>Administrator
+          </button>
+          <button class="role-btn" data-role="faculty" onclick="setRole(this)">
+            <span class="role-icon">🎓</span>Faculty
+          </button>
+          <button class="role-btn" data-role="librarian" onclick="setRole(this)">
+            <span class="role-icon">📋</span>Librarian
+          </button>
+          <button class="role-btn active" data-role="student" onclick="setRole(this)">
+            <span class="role-icon">🎒</span>Student
+          </button>
+        </div>
+
+        <div id="login-alert" class="alert alert-error" role="alert">
+          <span>⚠</span><span id="login-alert-msg"></span>
+        </div>
+
+        <form id="login-form" onsubmit="handleLogin(event)" novalidate>
+          <div class="field">
+            <label id="id-label">Student ID</label>
+            <div class="field-wrap">
+              <span class="field-icon">🪪</span>
+              <input type="text" id="user-id" placeholder="e.g. 22VR1A0501" autocomplete="username" required>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Password</label>
+            <div class="field-wrap">
+              <span class="field-icon">🔒</span>
+              <input type="password" id="login-pwd" placeholder="Enter your password" autocomplete="current-password" required>
+              <button type="button" class="pwd-toggle" onclick="togglePwd('login-pwd', this)" aria-label="Toggle password">👁</button>
+            </div>
+          </div>
+
+          <div class="form-footer">
+            <label style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);cursor:pointer;">
+              <input type="checkbox" id="remember-me" style="accent-color:var(--gold);width:14px;height:14px;">
+              Remember me
+            </label>
+            <button type="button" class="btn-ghost" onclick="showView('view-forgot-email')">Forgot Password?</button>
+          </div>
+
+          <button type="submit" class="btn-primary" style="margin-top:22px;">Sign In →</button>
+        </form>
+
+        <div class="back-site">
+          <a href="index.html">← Back to Library Home</a>
+        </div>
+      </div>
+
+      <!-- ======= VIEW: FORGOT — STEP 1 (email) ======= -->
+      <div class="view" id="view-forgot-email">
+        <button class="btn-back" onclick="showView('view-login')">← Back to Sign In</button>
+
+        <div class="progress-dots">
+          <div class="dot active" id="dot-1"></div>
+          <div class="dot" id="dot-2"></div>
+          <div class="dot" id="dot-3"></div>
+        </div>
+
+        <h2 class="card-title">Reset Password</h2>
+        <p class="card-sub">Step 1 of 3 — Verify your identity</p>
+
+        <p class="helper-text">
+          Enter your <strong>college email address</strong> associated with your library account.
+          An OTP will be sent to that address.
+        </p>
+
+        <div id="email-alert" class="alert alert-error" role="alert">
+          <span>⚠</span><span id="email-alert-msg"></span>
+        </div>
+
+        <!-- Role selector (compact) for forgot flow -->
+        <div class="field">
+          <label>Account Type</label>
+          <div class="field-wrap">
+            <span class="field-icon">👤</span>
+            <select id="forgot-role">
+              <option value="student">Student</option>
+              <option value="faculty">Faculty</option>
+              <option value="librarian">Librarian</option>
+              <option value="administrator">Administrator</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>College Email</label>
+          <div class="field-wrap">
+            <span class="field-icon">✉️</span>
+            <input type="email" id="forgot-email" placeholder="yourname@vemu.ac.in" autocomplete="email" required>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="sendOtp()">Send OTP →</button>
+      </div>
+
+      <!-- ======= VIEW: FORGOT — STEP 2 (OTP) ======= -->
+      <div class="view" id="view-forgot-otp">
+        <button class="btn-back" onclick="showView('view-forgot-email')">← Back</button>
+
+        <div class="progress-dots">
+          <div class="dot done" id="dot-1b"></div>
+          <div class="dot active" id="dot-2b"></div>
+          <div class="dot" id="dot-3b"></div>
+        </div>
+
+        <h2 class="card-title">Enter OTP</h2>
+        <p class="card-sub">Step 2 of 3 — Verification code</p>
+
+        <p class="helper-text" id="otp-sent-to">
+          A 6-digit OTP has been sent to your college email.
+          Please check your inbox (and spam folder).
+        </p>
+
+        <div id="otp-alert" class="alert alert-error" role="alert">
+          <span>⚠</span><span id="otp-alert-msg"></span>
+        </div>
+        <div id="otp-success" class="alert alert-success" role="alert">
+          <span>✓</span><span>OTP resent successfully!</span>
+        </div>
+
+        <div class="otp-row" id="otp-inputs">
+          <input class="otp-cell" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 1">
+          <input class="otp-cell" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 2">
+          <input class="otp-cell" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 3">
+          <input class="otp-cell" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 4">
+          <input class="otp-cell" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 5">
+          <input class="otp-cell" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 6">
+        </div>
+
+        <div class="resend-row">
+          <span id="resend-btn" class="disabled" onclick="resendOtp()">Resend OTP</span>
+          &nbsp;in&nbsp;<span id="otp-timer">01:00</span>
+        </div>
+
+        <button class="btn-primary" style="margin-top:22px;" onclick="verifyOtp()">Verify OTP →</button>
+      </div>
+
+      <!-- ======= VIEW: FORGOT — STEP 3 (new password) ======= -->
+      <div class="view" id="view-forgot-reset">
+        <div class="progress-dots">
+          <div class="dot done"></div>
+          <div class="dot done"></div>
+          <div class="dot active"></div>
+        </div>
+
+        <h2 class="card-title">New Password</h2>
+        <p class="card-sub">Step 3 of 3 — Set a new password</p>
+
+        <div id="reset-alert" class="alert alert-error" role="alert">
+          <span>⚠</span><span id="reset-alert-msg"></span>
+        </div>
+
+        <div class="field">
+          <label>New Password</label>
+          <div class="field-wrap">
+            <span class="field-icon">🔑</span>
+            <input type="password" id="new-pwd" placeholder="At least 8 characters" oninput="checkStrength(this.value)" autocomplete="new-password">
+            <button type="button" class="pwd-toggle" onclick="togglePwd('new-pwd', this)" aria-label="Toggle">👁</button>
+          </div>
+          <div class="pwd-strength"><div class="pwd-strength-bar" id="strength-bar"></div></div>
+          <p id="strength-label" style="font-size:.72rem;color:var(--muted);margin-top:5px;"></p>
+        </div>
+
+        <div class="field">
+          <label>Confirm Password</label>
+          <div class="field-wrap">
+            <span class="field-icon">🔑</span>
+            <input type="password" id="confirm-pwd" placeholder="Re-enter password" autocomplete="new-password">
+            <button type="button" class="pwd-toggle" onclick="togglePwd('confirm-pwd', this)" aria-label="Toggle">👁</button>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="resetPassword()">Update Password ✓</button>
+      </div>
+
+      <!-- ======= VIEW: SUCCESS ======= -->
+      <div class="view" id="view-success">
+        <div style="text-align:center; padding: 20px 0;">
+          <div style="font-size:3.5rem; margin-bottom:16px; animation: bounceIn .6s var(--ease-snap);">✅</div>
+          <h2 class="card-title" style="text-align:center;">Password Updated!</h2>
+          <p class="card-sub" style="text-align:center;">Your password has been reset successfully.</p>
+          <hr class="divider">
+          <p style="font-size:.85rem;color:var(--muted);margin-bottom:24px;">You can now sign in with your new password.</p>
+          <button class="btn-primary" onclick="showView('view-login')">Go to Sign In →</button>
+        </div>
+      </div>
+
+    </div><!-- /card -->
+  </div><!-- /right-panel -->
+
+</div><!-- /page-wrap -->
+
+<script>
+/* ============================================
+   STATE
+   ============================================ */
+const ROLES = {
+  student:       { label: 'Student ID',      placeholder: 'e.g. 22VR1A0501' },
+  faculty:       { label: 'Faculty ID',       placeholder: 'e.g. FAC-2024-012' },
+  librarian:     { label: 'Staff ID',         placeholder: 'e.g. LIB-001' },
+  administrator: { label: 'Admin ID',         placeholder: 'e.g. ADM-001' },
+};
+
+let currentRole    = 'student';
+let otpTimerHandle = null;
+let generatedOtp   = null; // demo only — in production, server-side
+
+/* ============================================
+   ROLE SELECTION
+   ============================================ */
+function setRole(btn) {
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentRole = btn.dataset.role;
+
+  const cfg = ROLES[currentRole];
+  document.getElementById('id-label').textContent     = cfg.label;
+  document.getElementById('user-id').placeholder      = cfg.placeholder;
+  hideAlert('login-alert');
+}
+
+/* ============================================
+   VIEW SWITCHING
+   ============================================ */
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+
+  // Sync forgot-role selector with currently selected login role
+  if (id === 'view-forgot-email') {
+    const fr = document.getElementById('forgot-role');
+    if (fr) fr.value = currentRole;
+  }
+
+  // Start OTP timer when entering OTP view
+  if (id === 'view-forgot-otp') startOtpTimer(60);
+
+  hideAlert('login-alert');
+  hideAlert('email-alert');
+  hideAlert('otp-alert');
+  hideAlert('reset-alert');
+}
+
+/* ============================================
+   DASHBOARD REDIRECT MAP
+   ============================================ */
+const DASHBOARD_MAP = {
+  administrator: 'admin.html',
+  librarian:     'librarian.html',
+  faculty:       'faculty.html',
+  student:       'student.html',
+};
+
+/* ============================================
+   LOGIN HANDLER
+   ============================================ */
+function handleLogin(e) {
+  e.preventDefault();
+  const uid = document.getElementById('user-id').value.trim();
+  const pwd = document.getElementById('login-pwd').value;
+
+  if (!uid) { showAlert('login-alert', `Please enter your ${ROLES[currentRole].label}.`); return; }
+  if (!pwd) { showAlert('login-alert', 'Please enter your password.'); return; }
+
+  const btn = e.target.querySelector('.btn-primary');
+  const origLabel = `Sign In →`;
+
+  setLoading(btn, true, 'Authenticating…');
+  hideAlert('login-alert');
+
+  /* ── Replace this setTimeout block with your real API call ──
+     Example:
+       const res  = await fetch('/api/auth/login', { method:'POST', ... });
+       const data = await res.json();
+       if (!data.success) { showAlert(...); return; }
+       window.location.href = DASHBOARD_MAP[data.user.activeRole];
+  ─────────────────────────────────────────────────────────── */
+  setTimeout(() => {
+    // ✅ Auth passed — redirect to the matching dashboard
+    const target = DASHBOARD_MAP[currentRole];
+
+    btn.textContent = `✓ Opening ${currentRole.charAt(0).toUpperCase() + currentRole.slice(1)} Portal…`;
+    btn.style.background = 'linear-gradient(135deg,#3dbf8a 0%,#5ddaa6 100%)';
+    btn.style.color = '#0d1b2a';
+
+    setTimeout(() => {
+      window.location.href = target;
+    }, 700);
+
+  }, 1300);
+}
+
+/* ============================================
+   SEND OTP
+   ============================================ */
+function sendOtp() {
+  const email = document.getElementById('forgot-email').value.trim();
+  const role  = document.getElementById('forgot-role').value;
+
+  if (!email) { showAlert('email-alert', 'Please enter your college email address.'); return; }
+  if (!isCollegeEmail(email)) {
+    showAlert('email-alert', 'Please enter a valid college email (e.g. yourname@vemu.ac.in).');
+    return;
+  }
+
+  // Generate demo OTP
+  generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
+  console.log(`[DEMO] OTP for ${email} (${role}): ${generatedOtp}`); // Remove in production
+
+  document.getElementById('otp-sent-to').innerHTML =
+    `OTP sent to <strong style="color:var(--gold-light)">${maskEmail(email)}</strong>. Check your inbox and spam folder.`;
+
+  showView('view-forgot-otp');
+}
+
+/* ============================================
+   RESEND OTP
+   ============================================ */
+function resendOtp() {
+  const email = document.getElementById('forgot-email').value.trim();
+  generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
+  console.log(`[DEMO] Resent OTP for ${email}: ${generatedOtp}`);
+
+  // Clear cells
+  document.querySelectorAll('.otp-cell').forEach(c => { c.value = ''; c.classList.remove('filled'); });
+  document.querySelectorAll('.otp-cell')[0].focus();
+
+  showAlert('otp-success-box', '', 'success');
+  document.getElementById('otp-success').classList.add('show');
+  setTimeout(() => document.getElementById('otp-success').classList.remove('show'), 3000);
+
+  startOtpTimer(60);
+}
+
+/* ============================================
+   VERIFY OTP
+   ============================================ */
+function verifyOtp() {
+  const cells  = document.querySelectorAll('.otp-cell');
+  const entered = Array.from(cells).map(c => c.value.trim()).join('');
+
+  if (entered.length < 6) { showAlert('otp-alert', 'Please enter all 6 digits of the OTP.'); return; }
+
+  // Demo verification — in production, call server
+  if (entered !== generatedOtp) {
+    showAlert('otp-alert', 'Incorrect OTP. Please check and try again.');
+    cells.forEach(c => { c.style.borderColor = 'var(--error)'; });
+    setTimeout(() => cells.forEach(c => { c.style.borderColor = ''; }), 1500);
+    return;
+  }
+
+  clearInterval(otpTimerHandle);
+  showView('view-forgot-reset');
+}
+
+/* ============================================
+   OTP INPUT BEHAVIOUR
+   ============================================ */
+document.getElementById('otp-inputs').addEventListener('input', (e) => {
+  const cell  = e.target;
+  const cells = [...document.querySelectorAll('.otp-cell')];
+  const idx   = cells.indexOf(cell);
+
+  // Allow only digits
+  cell.value = cell.value.replace(/\D/g, '');
+  cell.classList.toggle('filled', cell.value !== '');
+
+  if (cell.value && idx < cells.length - 1) cells[idx + 1].focus();
+});
+
+document.getElementById('otp-inputs').addEventListener('keydown', (e) => {
+  const cell  = e.target;
+  const cells = [...document.querySelectorAll('.otp-cell')];
+  const idx   = cells.indexOf(cell);
+
+  if (e.key === 'Backspace') {
+    if (!cell.value && idx > 0) { cells[idx - 1].value = ''; cells[idx - 1].classList.remove('filled'); cells[idx - 1].focus(); }
+    else { cell.value = ''; cell.classList.remove('filled'); }
+  }
+  if (e.key === 'ArrowLeft'  && idx > 0) cells[idx - 1].focus();
+  if (e.key === 'ArrowRight' && idx < cells.length - 1) cells[idx + 1].focus();
+});
+
+// Paste support
+document.getElementById('otp-inputs').addEventListener('paste', (e) => {
+  e.preventDefault();
+  const text  = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+  const cells = [...document.querySelectorAll('.otp-cell')];
+  text.split('').forEach((d, i) => { if (cells[i]) { cells[i].value = d; cells[i].classList.add('filled'); } });
+  if (cells[text.length]) cells[text.length].focus();
+  else if (cells[5]) cells[5].focus();
+});
+
+/* ============================================
+   OTP COUNTDOWN TIMER
+   ============================================ */
+function startOtpTimer(seconds) {
+  clearInterval(otpTimerHandle);
+  const btn   = document.getElementById('resend-btn');
+  const timer = document.getElementById('otp-timer');
+
+  btn.classList.add('disabled');
+
+  let remaining = seconds;
+  timer.textContent = fmt(remaining);
+  document.querySelector('.resend-row').innerHTML =
+    `<span id="resend-btn" class="disabled" onclick="resendOtp()">Resend OTP</span>&nbsp;in&nbsp;<span id="otp-timer">${fmt(remaining)}</span>`;
+
+  otpTimerHandle = setInterval(() => {
+    remaining--;
+    const t = document.getElementById('otp-timer');
+    const r = document.getElementById('resend-btn');
+    if (!t) { clearInterval(otpTimerHandle); return; }
+    if (remaining <= 0) {
+      clearInterval(otpTimerHandle);
+      t.textContent = '';
+      document.querySelector('.resend-row').innerHTML =
+        `<span id="resend-btn" onclick="resendOtp()">Resend OTP</span>`;
+    } else {
+      t.textContent = fmt(remaining);
+    }
+  }, 1000);
+}
+const fmt = s => `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+
+/* ============================================
+   RESET PASSWORD
+   ============================================ */
+function resetPassword() {
+  const np = document.getElementById('new-pwd').value;
+  const cp = document.getElementById('confirm-pwd').value;
+
+  if (!np)        { showAlert('reset-alert', 'Please enter a new password.'); return; }
+  if (np.length < 8) { showAlert('reset-alert', 'Password must be at least 8 characters.'); return; }
+  if (np !== cp)  { showAlert('reset-alert', 'Passwords do not match.'); return; }
+
+  showView('view-success');
+}
+
+/* ============================================
+   PASSWORD STRENGTH
+   ============================================ */
+function checkStrength(val) {
+  const bar   = document.getElementById('strength-bar');
+  const label = document.getElementById('strength-label');
+
+  let score = 0;
+  if (val.length >= 8)       score++;
+  if (/[A-Z]/.test(val))     score++;
+  if (/[0-9]/.test(val))     score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+
+  const levels = [
+    { w: '0%',   bg: 'transparent', txt: '' },
+    { w: '25%',  bg: '#e05252', txt: 'Weak' },
+    { w: '50%',  bg: '#f59e0b', txt: 'Fair' },
+    { w: '75%',  bg: '#5aacda', txt: 'Good' },
+    { w: '100%', bg: '#3dbf8a', txt: 'Strong ✓' },
+  ];
+  const l = levels[score];
+  bar.style.width      = l.w;
+  bar.style.background = l.bg;
+  label.textContent    = l.txt;
+  label.style.color    = l.bg;
+}
+
+/* ============================================
+   HELPERS
+   ============================================ */
+function togglePwd(id, btn) {
+  const input = document.getElementById(id);
+  const show  = input.type === 'password';
+  input.type  = show ? 'text' : 'password';
+  btn.textContent = show ? '🙈' : '👁';
+}
+
+function showAlert(id, msg, type = 'error') {
+  const el  = document.getElementById(id);
+  const msgEl = el.querySelector('[id$="-msg"]') || el.querySelector('span:last-child');
+  if (el) {
+    el.className = `alert alert-${type} show`;
+    if (msgEl) msgEl.textContent = msg;
+  }
+}
+function hideAlert(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+}
+
+function setLoading(btn, loading, text) {
+  btn.disabled     = loading;
+  btn.textContent  = text;
+}
+
+function isCollegeEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function maskEmail(email) {
+  const [u, d] = email.split('@');
+  const masked = u.slice(0,3) + '****' + (u.length > 6 ? u.slice(-2) : '');
+  return `${masked}@${d}`;
+}
+</script>
+<script src="api-client.js"></script>
+<script src="login.js"></script>
+</body>
+</html>

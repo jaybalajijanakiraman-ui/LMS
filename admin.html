@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — Vemu Library Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════
+     TOAST CONTAINER
+═══════════════════════════════════ -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ═══════════════════════════════════
+     OVERLAYS / MODALS
+═══════════════════════════════════ -->
+
+  <!-- User Modal -->
+  <div class="overlay" id="userModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3 id="userModalTitle">Add New User</h3>
+        <button class="modal-close" onclick="closeModal('userModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First Name *</label>
+            <input class="form-control" id="mFirstName" placeholder="e.g. Ravi" type="text">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name *</label>
+            <input class="form-control" id="mLastName" placeholder="e.g. Kumar" type="text">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">User ID *</label>
+            <input class="form-control" id="mUserId" placeholder="e.g. 22VR1A0501">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input class="form-control" id="mEmail" type="email" placeholder="name@vemu.ac.in">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input class="form-control" id="mPhone" placeholder="+91 XXXXX XXXXX">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Role *</label>
+            <select class="form-control" id="mRole">
+              <option value="">Select Role</option>
+              <option value="Student">Student</option>
+              <option value="Faculty">Faculty</option>
+              <option value="Librarian">Librarian</option>
+              <option value="Administrator">Administrator</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Password *</label>
+            <input class="form-control" id="mPassword" type="password" placeholder="Set login password">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm Password *</label>
+            <input class="form-control" id="mConfirmPassword" type="password" placeholder="Re-enter password">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Department</label>
+            <select class="form-control" id="mDept">
+              <option>Computer Science & Engineering</option>
+              <option>Electronics & Communication</option>
+              <option>Mechanical Engineering</option>
+              <option>Civil Engineering</option>
+              <option>Information Technology</option>
+              <option>Library & Admin</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="form-control" id="mStatus">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="Suspended">Suspended</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('userModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveUser()">💾 Save User</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Book Modal -->
+  <div class="overlay" id="bookModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3 id="bookModalTitle">Book Details</h3>
+        <button class="modal-close" onclick="closeModal('bookModal')">✕</button>
+      </div>
+      <div class="modal-body" id="bookModalBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('bookModal')">Close</button>
+        <button class="btn btn-primary" onclick="editCurrentBook()">✏️ Edit Record</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Issue Transaction Modal -->
+  <div class="overlay" id="issueModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3>Issue Book</h3>
+        <button class="modal-close" onclick="closeModal('issueModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Borrower *</label>
+            <select class="form-control" id="issueUser"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Book *</label>
+            <select class="form-control" id="issueBook"></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Due Date</label>
+            <input class="form-control" id="issueDueDate" type="date">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Issue Summary</label>
+            <div id="issuePreview" style="min-height:44px;padding:11px 14px;border:1px solid var(--border-soft);border-radius:var(--radius-md);background:var(--surface-2);font-size:.82rem;color:var(--text-sec)">
+              Select a borrower and book to preview this issue.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('issueModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveIssueTransaction()">📤 Issue Book</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reset Password Modal -->
+  <div class="overlay" id="passwordModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="passwordModalTitle">Reset Password</h3>
+        <button class="modal-close" onclick="closeModal('passwordModal')">âœ•</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">New Password *</label>
+          <input class="form-control" id="resetPasswordValue" type="password" placeholder="Enter a secure password">
+        </div>
+        <div class="form-group" style="margin-top:12px">
+          <label class="form-label">Confirm Password *</label>
+          <input class="form-control" id="resetPasswordConfirm" type="password" placeholder="Re-enter the same password">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('passwordModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitPasswordReset()">ðŸ” Save Password</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notifications Modal -->
+  <div class="overlay" id="notificationsModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3>Admin Notifications</h3>
+        <button class="modal-close" onclick="closeModal('notificationsModal')">âœ•</button>
+      </div>
+      <div class="modal-body">
+        <div id="notificationsList"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('notificationsModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Dialog -->
+  <div class="overlay" id="confirmOverlay">
+    <div class="confirm-dialog" id="confirmDialog">
+      <div class="cd-icon" id="confirmIcon">⚠️</div>
+      <h4 id="confirmTitle">Are you sure?</h4>
+      <p id="confirmMsg">This action cannot be undone.</p>
+      <div class="cd-actions">
+        <button class="btn btn-outline" onclick="closeModal('confirmOverlay')">Cancel</button>
+        <button class="btn btn-danger" id="confirmOkBtn" onclick="closeModal('confirmOverlay')">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+     APP SHELL
+═══════════════════════════════════ -->
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <button class="sb-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Collapse sidebar">◀</button>
+
+      <!-- Logo -->
+      <div class="sb-header">
+        <div class="sb-logo-icon">📚</div>
+        <div class="sb-logo-text">Vemu Library<small>Admin Control Panel</small></div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="sb-nav">
+        <div class="sb-section-label">Main</div>
+        <div class="sb-item active" data-section="dashboard" data-label="Dashboard"
+          onclick="navigate('dashboard',this)">
+          <div class="icon">🏠</div><span class="label">Dashboard</span>
+        </div>
+
+        <div class="sb-section-label">Management</div>
+        <div class="sb-item" data-section="users" data-label="User Management" onclick="navigate('users',this)">
+          <div class="icon">👥</div><span class="label">User Management</span>
+          <span class="sb-badge">3</span>
+        </div>
+        <div class="sb-item" data-section="inventory" data-label="Library Inventory"
+          onclick="navigate('inventory',this)">
+          <div class="icon">📖</div><span class="label">Library Inventory</span>
+        </div>
+        <div class="sb-item" data-section="transactions" data-label="Transactions"
+          onclick="navigate('transactions',this)">
+          <div class="icon">🔄</div><span class="label">Transactions</span>
+        </div>
+
+        <div class="sb-section-label">Analytics</div>
+        <div class="sb-item" data-section="reports" data-label="Reports & Analytics" onclick="navigate('reports',this)">
+          <div class="icon">📊</div><span class="label">Reports & Analytics</span>
+        </div>
+
+        <div class="sb-section-label">System</div>
+        <div class="sb-item" data-section="system" data-label="System Maintenance" onclick="navigate('system',this)">
+          <div class="icon">⚙️</div><span class="label">System Maintenance</span>
+        </div>
+        <div class="sb-item" data-section="audit" data-label="Audit Log" onclick="navigate('audit',this)">
+          <div class="icon">🔐</div><span class="label">Audit Log</span>
+        </div>
+      </nav>
+
+      <!-- User Footer -->
+      <div class="sb-footer">
+        <div class="sb-user">
+          <div class="sb-avatar">SA</div>
+          <div class="sb-user-info">
+            <div class="sb-user-name">Super Admin</div>
+            <div class="sb-user-role">Administrator</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="topbar-title">
+          <span class="page-icon" id="topbarIcon">🏠</span>
+          <span id="topbarTitle">Dashboard</span>
+          <span class="topbar-breadcrumb" id="topbarBreadcrumb">/ Overview</span>
+        </div>
+        <div class="topbar-spacer"></div>
+        <div class="topbar-search">
+          <div class="search-results-panel" id="searchResultsPanel"></div>
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search anything…" id="globalSearch" oninput="handleGlobalSearch(this.value)">
+        </div>
+        <button class="topbar-btn" title="Notifications" onclick="openNotifications()">
+          🔔<span class="notif-dot"></span>
+        </button>
+        <button class="topbar-btn" title="Quick Backup" onclick="quickBackup()">💾</button>
+        <button class="topbar-btn" title="Logout"
+          onclick="confirmAction('Logout','Are you sure you want to log out of the admin panel?','⚠️',()=>showToast('info','Redirecting to login…','👋'))">🚪</button>
+      </header>
+
+      <!-- CONTENT -->
+      <div class="content" id="mainContent">
+
+        <!-- ════════════════════════════
+           SECTION: DASHBOARD
+      ════════════════════════════ -->
+        <section class="section active" id="sec-dashboard">
+          <div class="section-header">
+            <div>
+              <h2>Smart Dashboard</h2>
+              <p>Real-time overview of your library system — <span id="live-time"></span></p>
+            </div>
+            <button class="btn btn-gold" onclick="refreshDashboard()">↻ Refresh</button>
+          </div>
+
+          <!-- Quick Stats -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-top">
+                <div class="stat-icon" style="background:var(--blue-bg)">👥</div>
+                <span class="stat-trend trend-up">▲ 12%</span>
+              </div>
+              <div class="stat-num" id="stat-users">1,248</div>
+              <div class="stat-label">Total Users</div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width:78%;background:var(--blue)"></div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-top">
+                <div class="stat-icon" style="background:var(--amber-bg)">📚</div>
+                <span class="stat-trend trend-up">▲ 5%</span>
+              </div>
+              <div class="stat-num" id="stat-books">55,432</div>
+              <div class="stat-label">Total Books</div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width:92%;background:var(--amber)"></div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-top">
+                <div class="stat-icon" style="background:var(--green-bg)">🔄</div>
+                <span class="stat-trend trend-neu">→ 0%</span>
+              </div>
+              <div class="stat-num" id="stat-loans">384</div>
+              <div class="stat-label">Active Loans</div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width:31%;background:var(--green)"></div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-top">
+                <div class="stat-icon" style="background:var(--red-bg)">⏰</div>
+                <span class="stat-trend trend-down">▼ 3</span>
+              </div>
+              <div class="stat-num" id="stat-overdue">27</div>
+              <div class="stat-label">Overdue Books</div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width:18%;background:var(--red)"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="insight-grid" id="dashboardInsights"></div>
+
+          <!-- Main Grid -->
+          <div class="grid-main" style="margin-bottom:20px">
+
+            <!-- Left: Chart + Activity -->
+            <div style="display:flex;flex-direction:column;gap:20px">
+
+              <!-- Loan Trend Chart -->
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">📈 Monthly Loan Trend</div>
+                    <div class="card-subtitle">Books issued vs returned (last 6 months)</div>
+                  </div>
+                  <select class="filter-select" style="font-size:.75rem;padding:5px 8px"
+                    onchange="updateTrendChart(this.value)">
+                    <option>Last 6 Months</option>
+                    <option>Last 12 Months</option>
+                    <option>This Year</option>
+                  </select>
+                </div>
+                <div class="card-body">
+                  <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+                </div>
+              </div>
+
+              <!-- Activity Feed -->
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">⚡ Live Activity Feed</div>
+                    <div class="card-subtitle">Last 8 system actions</div>
+                  </div>
+                  <button class="btn btn-outline btn-sm" onclick="loadMoreActivity()">Load More</button>
+                </div>
+                <div class="card-body" style="padding-top:8px">
+                  <div class="feed-list" id="activityFeed"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right column -->
+            <div style="display:flex;flex-direction:column;gap:20px">
+
+              <!-- System Status -->
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title">🖥️ System Status</div>
+                </div>
+                <div class="card-body">
+                  <div class="status-list" id="systemStatus"></div>
+                  <button class="btn btn-primary btn-sm" style="margin-top:14px;width:100%" onclick="quickBackup()">⚡
+                    Quick Backup</button>
+                </div>
+              </div>
+
+              <!-- Pending Approvals -->
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">⏳ Pending Approvals</div>
+                    <div class="card-subtitle" id="pendingCount">3 items need attention</div>
+                  </div>
+                  <button class="btn btn-outline btn-sm" onclick="openNotifications()">View All</button>
+                </div>
+                <div class="card-body" style="padding-top:8px">
+                  <div id="pendingApprovals"></div>
+                </div>
+              </div>
+
+              <!-- Category Pie -->
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title">📊 Books by Category</div>
+                </div>
+                <div class="card-body">
+                  <div class="chart-wrap"><canvas id="catChart" style="max-height:200px"></canvas></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════
+           SECTION: USER MANAGEMENT
+      ════════════════════════════ -->
+        <section class="section" id="sec-users">
+          <div class="section-header">
+            <div>
+              <h2>User Management</h2>
+              <p>Create, update, assign roles, and manage all library accounts</p>
+            </div>
+            <button class="btn btn-primary" onclick="openUserModal()">＋ Add New User</button>
+          </div>
+
+          <!-- Toolbar -->
+          <div class="toolbar">
+            <div class="search-field">
+              <span class="ico">🔍</span>
+              <input type="text" placeholder="Search by name, ID, or email…" id="userSearch" oninput="filterUsers()">
+            </div>
+            <select class="filter-select" id="roleFilter" onchange="filterUsers()">
+              <option value="">All Roles</option>
+              <option>Student</option>
+              <option>Faculty</option>
+              <option>Librarian</option>
+              <option>Administrator</option>
+            </select>
+            <select class="filter-select" id="statusFilter" onchange="filterUsers()">
+              <option value="">All Status</option>
+              <option>Active</option>
+              <option>Inactive</option>
+              <option>Suspended</option>
+            </select>
+            <span style="font-size:.8rem;color:var(--text-muted);margin-left:4px" id="userCount"></span>
+          </div>
+
+          <div class="card">
+            <div class="table-wrap">
+              <table class="data-table" id="userTable">
+                <thead>
+                  <tr>
+                    <th class="sortable" onclick="sortTable('users','name')">User ▾</th>
+                    <th class="sortable" onclick="sortTable('users','userId')">User ID</th>
+                    <th class="sortable" onclick="sortTable('users','role')">Role</th>
+                    <th>Department</th>
+                    <th class="sortable" onclick="sortTable('users','status')">Status</th>
+                    <th class="sortable" onclick="sortTable('users','joined')">Joined</th>
+                    <th style="text-align:right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="userTableBody"></tbody>
+              </table>
+            </div>
+            <div class="card-footer">
+              <span style="font-size:.78rem;color:var(--text-muted)" id="userPaginInfo"></span>
+              <div style="margin-left:auto" class="pagination" id="userPagination"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════
+           SECTION: INVENTORY
+      ════════════════════════════ -->
+        <section class="section" id="sec-inventory">
+          <div class="section-header">
+            <div>
+              <h2>Library Inventory</h2>
+              <p>Centralized catalog of all books and resources</p>
+            </div>
+            <button class="btn btn-primary" onclick="openBookForm()">＋ Add Book</button>
+          </div>
+
+          <div class="toolbar">
+            <div class="search-field">
+              <span class="ico">🔍</span>
+              <input type="text" placeholder="Search by title, author, or ISBN…" id="bookSearch"
+                oninput="filterBooks()">
+            </div>
+            <select class="filter-select" id="catFilter" onchange="filterBooks()">
+              <option value="">All Categories</option>
+              <option>Computer Science</option>
+              <option>Electronics</option>
+              <option>Mathematics</option>
+              <option>Management</option>
+              <option>Physics</option>
+              <option>General Fiction</option>
+            </select>
+            <select class="filter-select" id="availFilter" onchange="filterBooks()">
+              <option value="">All Status</option>
+              <option value="Available">Available</option>
+              <option value="Loaned">Loaned Out</option>
+              <option value="Archived">Archived</option>
+              <option value="Lost">Lost</option>
+            </select>
+            <span style="font-size:.8rem;color:var(--text-muted)" id="bookCount"></span>
+          </div>
+
+          <div class="card">
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Book</th>
+                    <th>ISBN</th>
+                    <th>Category</th>
+                    <th>Copies</th>
+                    <th>Available</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th style="text-align:right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="bookTableBody"></tbody>
+              </table>
+            </div>
+            <div class="card-footer">
+              <span style="font-size:.78rem;color:var(--text-muted)" id="bookPaginInfo"></span>
+              <div style="margin-left:auto" class="pagination" id="bookPagination"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════
+           SECTION: TRANSACTIONS
+      ════════════════════════════ -->
+        <section class="section" id="sec-transactions">
+          <div class="section-header">
+            <div>
+              <h2>Transactions</h2>
+              <p>All book checkouts, returns, and overdue records</p>
+            </div>
+            <button class="btn btn-primary" onclick="openIssueModal()">📤 Issue Book</button>
+          </div>
+
+          <div class="toolbar">
+            <div class="search-field">
+              <span class="ico">🔍</span>
+              <input type="text" placeholder="Search by user, book, or ID…" id="txSearch" oninput="filterTx()">
+            </div>
+            <select class="filter-select" id="txFilter" onchange="filterTx()">
+              <option value="">All Status</option>
+              <option>Borrowed</option>
+              <option>Returned</option>
+              <option>Overdue</option>
+              <option>Lost</option>
+            </select>
+          </div>
+
+          <div class="card">
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Tx ID</th>
+                    <th>Borrower</th>
+                    <th>Book</th>
+                    <th>Checkout</th>
+                    <th>Due Date</th>
+                    <th>Return Date</th>
+                    <th>Fine (₹)</th>
+                    <th>Status</th>
+                    <th style="text-align:right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="txTableBody"></tbody>
+              </table>
+            </div>
+            <div class="card-footer">
+              <span style="font-size:.78rem;color:var(--text-muted)" id="txCount">Showing 0 transactions</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════
+           SECTION: REPORTS
+      ════════════════════════════ -->
+        <section class="section" id="sec-reports">
+          <div class="section-header">
+            <div>
+              <h2>Reports & Analytics</h2>
+              <p>Interactive report builder — visualize and export data</p>
+            </div>
+            <div style="display:flex;gap:10px">
+              <button class="btn btn-outline" onclick="exportReport('csv')">📥 Export CSV</button>
+              <button class="btn btn-primary" onclick="exportReport('pdf')">📄 Export PDF</button>
+            </div>
+          </div>
+
+          <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:14px" id="reportMeta">Report data will load from the backend.</div>
+
+          <!-- Report Type Selector -->
+          <div class="report-types">
+            <div class="report-type-btn active" onclick="selectReport('user-growth',this)">
+              <span class="ricon">📈</span><span class="rlabel">User Growth</span>
+            </div>
+            <div class="report-type-btn" onclick="selectReport('most-borrowed',this)">
+              <span class="ricon">🏆</span><span class="rlabel">Most Borrowed</span>
+            </div>
+            <div class="report-type-btn" onclick="selectReport('inventory-value',this)">
+              <span class="ricon">💰</span><span class="rlabel">Inventory Value</span>
+            </div>
+            <div class="report-type-btn" onclick="selectReport('fines',this)">
+              <span class="ricon">⚖️</span><span class="rlabel">Fine Collection</span>
+            </div>
+          </div>
+
+          <!-- Date Range -->
+          <div class="date-pills">
+            <div class="date-pill active" onclick="selectDateRange(this,'7d')">Last 7 Days</div>
+            <div class="date-pill" onclick="selectDateRange(this,'30d')">Last 30 Days</div>
+            <div class="date-pill" onclick="selectDateRange(this,'3m')">Last 3 Months</div>
+            <div class="date-pill" onclick="selectDateRange(this,'6m')">Last 6 Months</div>
+            <div class="date-pill" onclick="selectDateRange(this,'1y')">This Year</div>
+            <input type="date" id="customDateFrom" class="filter-select" style="padding:5px 10px;font-size:.78rem"
+              onchange="applyCustomDateRange()">
+            <span style="font-size:.8rem;color:var(--text-muted);align-self:center">to</span>
+            <input type="date" id="customDateTo" class="filter-select" style="padding:5px 10px;font-size:.78rem"
+              onchange="applyCustomDateRange()">
+          </div>
+
+          <div class="grid-2" style="margin-bottom:20px">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title" id="reportChartTitle">📈 User Growth</div>
+              </div>
+              <div class="card-body">
+                <div class="chart-wrap"><canvas id="reportMainChart"></canvas></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">🥧 Distribution Breakdown</div>
+              </div>
+              <div class="card-body">
+                <div class="chart-wrap"><canvas id="reportPieChart" style="max-height:230px"></canvas></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Table -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">📋 Summary Table</div>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead id="reportTableHead"></thead>
+                <tbody id="reportTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════
+           SECTION: SYSTEM MAINTENANCE
+      ════════════════════════════ -->
+        <section class="section" id="sec-system">
+          <div class="section-header">
+            <div>
+              <h2>System Maintenance</h2>
+              <p>Backup, restore, and system configuration controls</p>
+            </div>
+          </div>
+
+          <div class="maintenance-grid">
+            <!-- Backup -->
+            <div class="backup-card">
+              <h3>💾 Database Backup</h3>
+              <p>Create a secure snapshot of all library data</p>
+              <div class="backup-ts">
+                <div class="ts-label">Last Successful Backup</div>
+                <div class="ts-val" id="lastBackupTime">2025-03-20 &nbsp; 02:00:14</div>
+              </div>
+              <div class="backup-ts" style="margin-bottom:16px">
+                <div class="ts-label">Backup Size</div>
+                <div class="ts-val" id="backupMeta">No restore points yet</div>
+              </div>
+              <div class="backup-ts" style="margin-bottom:16px">
+                <div class="ts-label">Last Restore</div>
+                <div class="ts-val" id="lastRestoreTime">Never restored</div>
+              </div>
+              <button class="btn btn-gold" onclick="performBackup()" style="width:100%">⚡ Generate Manual
+                Backup</button>
+            </div>
+
+            <!-- Restore -->
+            <div class="card" style="background:linear-gradient(135deg,#fff9f9 0%,#fff 100%)">
+              <div class="card-header">
+                <div>
+                  <div class="card-title" style="color:var(--red)">🔴 Restore Database</div>
+                  <div class="card-subtitle">Restricted — may overwrite all current data</div>
+                </div>
+              </div>
+              <div class="card-body">
+                <p style="font-size:.83rem;color:var(--text-sec);line-height:1.6;margin-bottom:16px">
+                  To prevent accidental data loss, type <strong
+                    style="font-family:var(--font-mono);color:var(--red)">CONFIRM</strong> in the field below to unlock
+                  the restore button.
+                </p>
+                <div class="form-group">
+                  <label class="form-label">Safety Confirmation</label>
+                  <input class="confirm-field" id="restoreConfirm" placeholder="Type CONFIRM to proceed"
+                    oninput="checkRestoreConfirm()">
+                </div>
+                <div class="form-group" style="margin-top:8px">
+                  <label class="form-label">Restore Point</label>
+                  <select class="form-control" id="restorePoint"></select>
+                </div>
+                <button class="btn btn-danger" id="restoreBtn" disabled style="width:100%;margin-top:8px;opacity:.4"
+                  onclick="confirmRestore()">
+                  ↺ Restore from Selected Backup
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Scheduled Backups -->
+          <div class="card" style="margin-top:20px">
+            <div class="card-header">
+              <div class="card-title">⏰ Automated Backup Schedule</div>
+            </div>
+            <div class="card-body">
+              <div class="schedule-row">
+                <span style="font-size:1.1rem">🌙</span>
+                <label>Daily Backup — Every day at <strong>2:00 AM</strong></label>
+                <label class="toggle"><input type="checkbox" id="dailyBackupToggle" checked onchange="scheduleChanged('Daily',this)"><span
+                    class="toggle-slider"></span></label>
+              </div>
+              <div class="schedule-row">
+                <span style="font-size:1.1rem">📅</span>
+                <label>Weekly Full Backup — Every Sunday at <strong>3:00 AM</strong></label>
+                <label class="toggle"><input type="checkbox" id="weeklyBackupToggle" checked onchange="scheduleChanged('Weekly',this)"><span
+                    class="toggle-slider"></span></label>
+              </div>
+              <div class="schedule-row">
+                <span style="font-size:1.1rem">🗓️</span>
+                <label>Monthly Archive — First of every month at <strong>4:00 AM</strong></label>
+                <label class="toggle"><input type="checkbox" id="monthlyBackupToggle" onchange="scheduleChanged('Monthly',this)"><span
+                    class="toggle-slider"></span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:20px">
+            <div class="card-header">
+              <div class="card-title">ðŸ—‚ï¸ Backup History</div>
+            </div>
+            <div class="card-body">
+              <div id="restoreHistoryList"></div>
+            </div>
+          </div>
+
+          <!-- System Settings -->
+          <div class="card" style="margin-top:20px">
+            <div class="card-header">
+              <div class="card-title">⚙️ System Configuration</div>
+            </div>
+            <div class="card-body">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Default Loan Period (days)</label>
+                  <input class="form-control" id="sysLoanPeriod" type="number" value="14" min="1">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Max Books Per Student</label>
+                  <input class="form-control" id="sysMaxBooks" type="number" value="3" min="1">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Fine Per Day (₹)</label>
+                  <input class="form-control" id="sysFineRate" type="number" value="2" min="0">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Renewal Limit (times)</label>
+                  <input class="form-control" id="sysRenewalLimit" type="number" value="2" min="0">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Audit Retention (days)</label>
+                  <input class="form-control" id="sysAuditRetention" type="number" value="90" min="0">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Backup History Limit</label>
+                  <input class="form-control" id="sysBackupLimit" type="number" value="12" min="1">
+                </div>
+              </div>
+              <div style="text-align:right;margin-top:6px">
+                <button class="btn btn-primary" onclick="saveSystemConfig()">💾 Save
+                  Configuration</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════
+           SECTION: AUDIT LOG
+      ════════════════════════════ -->
+        <section class="section" id="sec-audit">
+          <div class="section-header">
+            <div>
+              <h2>Audit Log</h2>
+              <p>Master record of all administrative actions</p>
+            </div>
+            <div style="display:flex;gap:10px">
+              <button class="btn btn-outline" onclick="exportReport('csv')">📥 Export Log</button>
+              <button class="btn btn-primary" onclick="navigate('system',document.querySelector('[data-section=system]'))">⚙️ Log
+                Settings</button>
+            </div>
+          </div>
+
+          <div class="toolbar">
+            <div class="search-field">
+              <span class="ico">🔍</span>
+              <input type="text" placeholder="Filter by user or action…" id="auditSearch" oninput="filterAudit()">
+            </div>
+            <select class="filter-select" id="auditMethod" onchange="filterAudit()">
+              <option value="">All Methods</option>
+              <option value="POST">POST</option>
+              <option value="PUT">PUT</option>
+              <option value="DELETE">DELETE</option>
+              <option value="GET">GET</option>
+            </select>
+          </div>
+
+          <div class="card">
+            <div class="audit-header">
+              <span>Timestamp</span>
+              <span>Method</span>
+              <span>User</span>
+              <span>Action / Endpoint</span>
+              <span>Status</span>
+            </div>
+            <div id="auditTableBody" style="max-height:500px;overflow-y:auto"></div>
+            <div class="card-footer">
+              <span style="font-size:.78rem;color:var(--text-muted)" id="auditCount"></span>
+              <div style="margin-left:auto" class="pagination" id="auditPagination"></div>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- /content -->
+    </div><!-- /main -->
+  </div><!-- /app -->
+
+  <script src="api-client.js"></script>
+  <script src="auth-ui.js"></script>
+  <script src="profile-ui.js"></script>
+  <script src="admin-app.js"></script>
+</body>
+
+</html>
+
+

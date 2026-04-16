@@ -1,0 +1,659 @@
+{
+  "users": [
+    {
+      "id": "user-admin-001",
+      "userId": "ADM-001",
+      "email": "JayBalaji@vemu.org",
+      "password": "Jchitra@12",
+      "user_name": "J Jay Balaji",
+      "firstName": "J Jay",
+      "lastName": "Balaji",
+      "phone": "9347857837",
+      "role": "Administrator",
+      "dept": "Library & Admin",
+      "status": "Active",
+      "joined": "2026-04-08",
+      "profile": {
+        "linkedin": "",
+        "portfolio": "",
+        "goalText": "",
+        "motivationalWords": ""
+      },
+      "profileStatus": "Normal"
+    },
+    {
+      "id": "user-99f2a1cbe779",
+      "userId": "ADM-002",
+      "email": "depasomu641@gmail.com",
+      "password": "somu3101",
+      "user_name": "A Somu",
+      "firstName": "A",
+      "lastName": "Somu",
+      "phone": "93816 73457",
+      "role": "Administrator",
+      "dept": "Computer Science & Engineering",
+      "status": "Active",
+      "joined": "2026-04-07",
+      "profile": {
+        "linkedin": "",
+        "portfolio": "",
+        "goalText": "",
+        "motivationalWords": ""
+      },
+      "profileStatus": "Normal"
+    },
+    {
+      "id": "user-c7edf2a05f0b",
+      "userId": "STD-3162",
+      "email": "sameeravajrala2@gmail.com",
+      "password": "same3162",
+      "user_name": "vajrala sameera",
+      "firstName": "vajrala",
+      "lastName": "sameera",
+      "phone": "9652014707",
+      "role": "Student",
+      "dept": "Computer Science & Engineering",
+      "status": "Active",
+      "joined": "2026-04-07",
+      "profile": {
+        "linkedin": "",
+        "portfolio": "",
+        "goalText": "",
+        "motivationalWords": ""
+      },
+      "profileStatus": "Normal"
+    },
+    {
+      "id": "user-fe705d40dfb3",
+      "userId": "STD-002",
+      "email": "leelavarunleelavarun323@gmail.com",
+      "password": "leel3115",
+      "user_name": "gaddam leela varun",
+      "firstName": "gaddam",
+      "lastName": "leela varun",
+      "phone": "6303408462",
+      "role": "Student",
+      "dept": "Computer Science & Engineering",
+      "status": "Active",
+      "joined": "2026-04-07",
+      "profile": {
+        "linkedin": "",
+        "portfolio": "",
+        "goalText": "",
+        "motivationalWords": ""
+      },
+      "profileStatus": "Normal"
+    },
+    {
+      "id": "user-33ac3728a186",
+      "userId": "FAC-001",
+      "email": "gunavathi0911@gmail.com",
+      "password": "guna3111",
+      "user_name": "Ellanki gunavathi",
+      "firstName": "Ellanki",
+      "lastName": "gunavathi",
+      "phone": "9390631364",
+      "role": "Faculty",
+      "dept": "Computer Science & Engineering",
+      "status": "Active",
+      "joined": "2026-04-07",
+      "profile": {
+        "linkedin": "",
+        "portfolio": "",
+        "goalText": "",
+        "motivationalWords": ""
+      },
+      "profileStatus": "Normal"
+    },
+    {
+      "id": "user-dff91aded4f5",
+      "userId": "FAC-002",
+      "email": "ballipagukeerthana7@gmail.com",
+      "password": "keer3106",
+      "user_name": "Ballipagu Keerthana",
+      "firstName": "Ballipagu",
+      "lastName": "Keerthana",
+      "phone": "8332084475",
+      "role": "Faculty",
+      "dept": "Computer Science & Engineering",
+      "status": "Active",
+      "joined": "2026-04-07",
+      "profile": {
+        "linkedin": "",
+        "portfolio": "",
+        "goalText": "",
+        "motivationalWords": ""
+      },
+      "profileStatus": "Normal"
+    },
+    {
+      "id": "user-5ac111a43611",
+      "userId": "STD-3145",
+      "email": "nandhakumarremesh27@gmail.com",
+      "password": "nand3145",
+      "user_name": "R Nanda Kumar",
+      "firstName": "R",
+      "lastName": "Nanda Kumar",
+      "phone": "7898619599",
+      "role": "Student",
+      "dept": "Computer Science & Engineering",
+      "status": "Active",
+      "joined": "2026-04-07",
+      "profile": {
+        "linkedin": "",
+        "portfolio": "",
+        "goalText": "",
+        "motivationalWords": ""
+      },
+      "profileStatus": "Normal"
+    },
+    {
+      "id": "user-d69f58395c49",
+      "userId": "LIB-001",
+      "email": "penumurujahnavi8@gmail.com",
+      "password": "jahn3106",
+      "user_name": "penumuru jahnavi",
+      "firstName": "penumuru",
+      "lastName": "jahnavi",
+      "phone": "9392166656",
+      "role": "Librarian",
+      "dept": "Computer Science & Engineering",
+      "status": "Active",
+      "joined": "2026-04-07",
+      "profile": {
+        "linkedin": "",
+        "portfolio": "",
+        "goalText": "",
+        "motivationalWords": ""
+      },
+      "profileStatus": "Normal"
+    },
+    {
+      "id": "user-bab4afc1db3b",
+      "userId": "LIB-002",
+      "email": "reehanshaik165@gmail.com",
+      "password": "reeh3155",
+      "user_name": "Shaik Reehan",
+      "firstName": "Shaik",
+      "lastName": "Reehan",
+      "phone": "7207702634",
+      "role": "Librarian",
+      "dept": "Computer Science & Engineering",
+      "status": "Active",
+      "joined": "2026-04-07",
+      "profile": {
+        "linkedin": "",
+        "portfolio": "",
+        "goalText": "",
+        "motivationalWords": ""
+      },
+      "profileStatus": "Normal"
+    },
+    {
+      "id": "user-db442b773a70",
+      "userId": "STD-3160",
+      "email": "Prakashbabup175@gmail.com",
+      "password": "prak3160",
+      "user_name": "Babu Prakash",
+      "firstName": "Babu",
+      "lastName": "Prakash",
+      "phone": "7075902075",
+      "role": "Student",
+      "dept": "Computer Science & Engineering",
+      "status": "Active",
+      "joined": "2026-04-07",
+      "profile": {
+        "linkedin": "",
+        "portfolio": "",
+        "goalText": "",
+        "motivationalWords": ""
+      },
+      "profileStatus": "Normal"
+    },
+    {
+      "id": "user-05c4a72035b1",
+      "userId": "ADM-003",
+      "email": "devisree7878@gmail.com",
+      "password": "devi3132",
+      "user_name": "N Devisree",
+      "firstName": "N",
+      "lastName": "Devisree",
+      "phone": "9346512899",
+      "role": "Administrator",
+      "dept": "Computer Science & Engineering",
+      "status": "Active",
+      "joined": "2026-04-07",
+      "profile": {
+        "linkedin": "",
+        "portfolio": "",
+        "goalText": "",
+        "motivationalWords": ""
+      },
+      "profileStatus": "Normal"
+    }
+  ],
+  "books": [],
+  "transactions": [],
+  "auditLog": [
+    {
+      "ts": "2026-04-08 19:37:48",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "Manual backup completed",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 19:37:48",
+      "method": "PUT",
+      "user": "J Jay Balaji",
+      "action": "Updated system configuration",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 19:37:46",
+      "method": "POST",
+      "user": "vajrala sameera",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 19:37:46",
+      "method": "POST",
+      "user": "penumuru jahnavi",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 19:37:46",
+      "method": "POST",
+      "user": "Ellanki gunavathi",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 19:37:46",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 17:45:14",
+      "method": "POST",
+      "user": "penumuru jahnavi",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 17:42:09",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 16:28:48",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "Manual backup completed",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 16:28:43",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "Manual backup completed",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 15:38:16",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "Manual backup completed",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 15:37:45",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 15:37:28",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "Manual backup completed",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 14:39:42",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 14:32:46",
+      "method": "POST",
+      "user": "penumuru jahnavi",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 14:19:21",
+      "method": "POST",
+      "user": "Ellanki gunavathi",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 14:17:01",
+      "method": "POST",
+      "user": "penumuru jahnavi",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 14:16:49",
+      "method": "POST",
+      "user": "Ellanki gunavathi",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 14:14:46",
+      "method": "POST",
+      "user": "Ellanki gunavathi",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 13:59:34",
+      "method": "POST",
+      "user": "Ellanki gunavathi",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 13:59:12",
+      "method": "POST",
+      "user": "penumuru jahnavi",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 13:57:33",
+      "method": "POST",
+      "user": "vajrala sameera",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 11:19:05",
+      "method": "POST",
+      "user": "Ellanki gunavathi",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 11:13:20",
+      "method": "POST",
+      "user": "vajrala sameera",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 09:59:07",
+      "method": "POST",
+      "user": "vajrala sameera",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 09:58:51",
+      "method": "PUT",
+      "user": "J Jay Balaji",
+      "action": "Updated account \"vajrala sameera\"",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 09:57:59",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 09:56:22",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 09:28:19",
+      "method": "POST",
+      "user": "Ellanki gunavathi",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 09:13:39",
+      "method": "POST",
+      "user": "Ellanki gunavathi",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 09:12:58",
+      "method": "PUT",
+      "user": "J Jay Balaji",
+      "action": "Updated account \"penumuru jahnavi\"",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 09:12:07",
+      "method": "PUT",
+      "user": "J Jay Balaji",
+      "action": "Updated account \"penumuru jahnavi\"",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 09:10:54",
+      "method": "PUT",
+      "user": "J Jay Balaji",
+      "action": "Updated account \"A Somu\"",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 09:10:23",
+      "method": "PUT",
+      "user": "J Jay Balaji",
+      "action": "Updated account \"gaddam leela varun\"",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 09:08:40",
+      "method": "PUT",
+      "user": "J Jay Balaji",
+      "action": "Updated account \"Ellanki gunavathi\"",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 09:08:15",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 09:03:37",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 09:02:13",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 09:01:29",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "Manual backup completed",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 09:00:26",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 05:51:59",
+      "method": "POST",
+      "user": "Ballipagu Keerthana",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 05:43:21",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 05:31:26",
+      "method": "PUT",
+      "user": "J Jay Balaji",
+      "action": "Updated account \"R Nanda Kumar\"",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 05:29:13",
+      "method": "PUT",
+      "user": "J Jay Balaji",
+      "action": "Updated account \"gaddam leela varun\"",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 05:28:03",
+      "method": "PUT",
+      "user": "J Jay Balaji",
+      "action": "Updated account \"gaddam leela varun\"",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 05:24:05",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 05:21:15",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 05:20:00",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 05:13:14",
+      "method": "POST",
+      "user": "J Jay Balaji",
+      "action": "User logged in",
+      "status": 200
+    },
+    {
+      "ts": "2026-04-08 05:10:23",
+      "method": "POST",
+      "user": "Kumar Nandha",
+      "action": "User logged in",
+      "status": 200
+    }
+  ],
+  "sessions": [
+    {
+      "token": "e39e53172baf6463322b38d25c084467441d30b6d715e746",
+      "userId": "user-5ac111a43611",
+      "createdAt": "2026-04-08T05:10:23.531Z"
+    },
+    {
+      "token": "569f7fac84ac98e26c2f6d4f0fe8f3cf358752817ea3b1e9",
+      "userId": "user-admin-001",
+      "createdAt": "2026-04-08T19:37:46.074Z"
+    },
+    {
+      "token": "b6e3cba222209f581bb853071aaa1319c3176ac57d37950a",
+      "userId": "user-33ac3728a186",
+      "createdAt": "2026-04-08T19:37:46.093Z"
+    },
+    {
+      "token": "b767777a348ab5199a090b39ecd488d596836ed4621f20a2",
+      "userId": "user-d69f58395c49",
+      "createdAt": "2026-04-08T19:37:46.104Z"
+    },
+    {
+      "token": "c7c599f252889dde9838f38bafa50cdf92562ab14b9f11fa",
+      "userId": "user-c7edf2a05f0b",
+      "createdAt": "2026-04-08T19:37:46.115Z"
+    }
+  ],
+  "system": {
+    "auditRetentionDays": 90,
+    "backupHistoryLimit": 12,
+    "fineRate": 2,
+    "facultyBulkRequests": [],
+    "facultyPreferences": {},
+    "facultyProcurementRequests": [],
+    "facultyReserves": [],
+    "inventoryEvents": [],
+    "lastBackupTime": "2026-04-08 19:37:48",
+    "loanPeriodDays": 14,
+    "ledgerEntries": [],
+    "maxBooksPerStudent": 3,
+    "reminderLog": [],
+    "renewalLimit": 2,
+    "lastRestoreTime": "",
+    "studentPaymentRequests": [],
+    "studentPreferences": {},
+    "studentRenewalRequests": [],
+    "studentReservations": [],
+    "backupSchedule": {
+      "daily": true,
+      "weekly": true,
+      "monthly": false
+    },
+    "restorePoints": [
+      {
+        "id": "backup-a641da304eec",
+        "label": "Manual backup",
+        "filename": "2026-04-08T16-28-48-backup-a641da304eec.json",
+        "createdAt": "2026-04-08T16:28:48.443Z",
+        "sizeBytes": 14186
+      },
+      {
+        "id": "backup-4018327d653b",
+        "label": "Manual backup",
+        "filename": "2026-04-08T16-28-43-backup-4018327d653b.json",
+        "createdAt": "2026-04-08T16:28:43.511Z",
+        "sizeBytes": 13785
+      }
+    ],
+    "undoStack": []
+  }
+}

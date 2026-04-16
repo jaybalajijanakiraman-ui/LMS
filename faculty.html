@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faculty Portal — Vemu Library Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="faculty.css">
+</head>
+
+<body>
+
+  <!-- TOASTS -->
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <!-- ═══════════ MODALS ═══════════ -->
+
+  <!-- Book Detail / Advanced Metadata Modal -->
+  <div class="ovl" id="bookDetailModal">
+    <div class="modal modal-lg">
+      <div class="mhdr">
+        <h3 id="bdTitle">Book Details</h3>
+        <button class="mcls" onclick="closeM('bookDetailModal')">✕</button>
+      </div>
+      <div class="mbdy" id="bdBody"></div>
+      <div class="mftr">
+        <button class="btn btn-outline" onclick="closeM('bookDetailModal')">Close</button>
+        <button class="btn btn-purple"
+          onclick="closeM('bookDetailModal');addCurrentModalBookToReserve()">📌 Add to
+          Reserve</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bulk Issue Confirmation -->
+  <div class="ovl" id="bulkModal">
+    <div class="modal">
+      <div class="mhdr">
+        <h3>📦 Confirm Bulk Issue Request</h3>
+        <button class="mcls" onclick="closeM('bulkModal')">✕</button>
+      </div>
+      <div class="mbdy" id="bulkModalBody"></div>
+      <div class="mftr">
+        <button class="btn btn-outline" onclick="closeM('bulkModal')">Cancel</button>
+        <button class="btn btn-purple" onclick="confirmBulk()">✅ Submit Request to Librarian</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reserve Publish Modal -->
+  <div class="ovl" id="publishModal">
+    <div class="modal">
+      <div class="mhdr">
+        <h3>📢 Publish Course Reserve List</h3>
+        <button class="mcls" onclick="closeM('publishModal')">✕</button>
+      </div>
+      <div class="mbdy">
+        <div class="fg"><label class="flbl">Course Name <span>*</span></label><input class="fc" id="pubCourse"
+            placeholder="e.g. Intro to Computer Science — CS101"></div>
+        <div class="fg"><label class="flbl">Semester / Session</label><select class="fc" id="pubSemester">
+            <option>2024–25 Odd Semester</option>
+            <option>2024–25 Even Semester</option>
+            <option>2025–26 Odd Semester</option>
+          </select></div>
+        <div class="fg"><label class="flbl">Visibility</label><select class="fc" id="pubVisibility">
+            <option>All Students (Public)</option>
+            <option>My Department Only</option>
+            <option>Specific Class</option>
+          </select></div>
+        <div class="fg"><label class="flbl">Notes to Students</label><textarea class="fc" rows="2" id="pubNotes"
+            placeholder="Optional message to accompany the reading list…"></textarea></div>
+      </div>
+      <div class="mftr">
+        <button class="btn btn-outline" onclick="closeM('publishModal')">Cancel</button>
+        <button class="btn btn-purple" onclick="confirmPublish()">📢 Publish List</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ APP SHELL ═══════════ -->
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <button class="sb-toggle" id="sbToggle" onclick="toggleSb()">◀</button>
+      <div class="sb-head">
+        <div class="sb-logo">📖</div>
+        <div class="sb-brand">Vemu Library<small>Faculty Portal</small></div>
+      </div>
+      <nav class="sb-nav">
+        <div class="sb-grp">Desk</div>
+        <div class="sb-item active" data-sec="dashboard" data-tip="Dashboard" onclick="nav('dashboard',this)">
+          <div class="ico">🏠</div><span class="lbl">Research Hub</span>
+        </div>
+        <div class="sb-grp">Curation</div>
+        <div class="sb-item" data-sec="reserves" data-tip="Course Reserves" onclick="nav('reserves',this)">
+          <div class="ico">📚</div><span class="lbl">Course Reserves</span>
+          <span class="sb-badge">2</span>
+        </div>
+        <div class="sb-item" data-sec="search" data-tip="Advanced Search" onclick="nav('search',this)">
+          <div class="ico">🔍</div><span class="lbl">Advanced Search</span>
+        </div>
+        <div class="sb-grp">Department</div>
+        <div class="sb-item" data-sec="department" data-tip="Dept Library" onclick="nav('department',this)">
+          <div class="ico">🏛️</div><span class="lbl">Dept Library</span>
+        </div>
+        <div class="sb-item" data-sec="bulk" data-tip="Bulk Issue" onclick="nav('bulk',this)">
+          <div class="ico">📦</div><span class="lbl">Bulk Issue</span>
+        </div>
+        <div class="sb-grp">Administration</div>
+        <div class="sb-item" data-sec="procurement" data-tip="Procurement" onclick="nav('procurement',this)">
+          <div class="ico">🛒</div><span class="lbl">Recommend Purchase</span>
+        </div>
+      </nav>
+      <div class="sb-foot">
+        <div class="sb-user">
+          <div class="sb-av">SR</div>
+          <div class="sb-uinfo">
+            <div class="sb-uname">Dr. Srinivas Rao</div>
+            <div class="sb-urole">FAC-2019-004 · CSE</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main">
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-ttl">
+            <span class="topbar-icon" id="tbIcon">🏠</span>
+            <div class="topbar-copy">
+              <span class="topbar-title" id="tbTitle">Research Hub</span>
+              <span class="topbar-bc" id="tbBc">Dashboard</span>
+            </div>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <!-- Advanced Boolean Search -->
+          <div class="adv-search">
+            <div class="adv-search-shell">
+              <span class="si">🔍</span>
+              <input type="text" id="globalSearch" placeholder="Search title, DOI, ISBN or use AND / OR / NOT"
+                autocomplete="off" oninput="handleSearch(this.value)">
+              <div class="search-type-pills">
+                <span class="stp active" onclick="setSearchType('textbook',this)">TXT</span>
+                <span class="stp" onclick="setSearchType('journal',this)">JRN</span>
+                <span class="stp" onclick="setSearchType('reference',this)">REF</span>
+              </div>
+            </div>
+            <span class="adv-search-note">Boolean search, DOI lookups, and quick field filters</span>
+          </div>
+          <div class="dept-chip" onclick="nav('department',document.querySelector('[data-sec=department]'))">
+            🏛️ CS Dept Library
+          </div>
+          <button class="tb-btn" onclick="showFacultyArrivalToast()">🔔<span
+              class="ndot"></span></button>
+          <button class="tb-btn tb-btn-text" onclick="openFacultyStudentPreview()"><span
+              class="tb-btn-ico">👁</span><span>Student View</span></button>
+          <button class="tb-btn tb-btn-text logout-btn" type="button" title="Logout">
+            <span class="tb-btn-ico">&#128682;</span>
+            <span>Logout</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- CONTENT -->
+      <div class="content" id="mainContent">
+
+        <!-- ═══════════════════════ DASHBOARD ═══════════════════════ -->
+        <section class="section active" id="sec-dashboard">
+
+          <!-- Faculty privilege notice -->
+          <div class="priv-bar">
+            <span style="font-size:1.1rem">🎓</span>
+            <span><strong>Faculty Privileges Active:</strong> 180-day borrowing period · Fine exemption (block after 30
+              days overdue) · Course Reserve creation · Procurement requests enabled</span>
+          </div>
+
+          <!-- Stats -->
+          <div class="stat-row">
+            <div class="scard" style="animation-delay:.04s">
+              <div class="scard-top">
+                <div class="scard-ico" style="background:var(--P-bg)">📚</div>
+                <span class="scard-chip" id="facultyIssuedChip" style="background:var(--P-bg);color:var(--P500)">Live</span>
+              </div>
+              <div class="scard-num" id="facultyIssuedCount">0</div>
+              <div class="scard-lbl">Books Issued</div>
+            </div>
+            <div class="scard" style="animation-delay:.08s">
+              <div class="scard-top">
+                <div class="scard-ico" style="background:var(--green-bg)">📋</div>
+                <span class="scard-chip" id="facultyReserveChip" style="background:var(--green-bg);color:var(--green)">Draft</span>
+              </div>
+              <div class="scard-num" id="facultyReserveCount">0</div>
+              <div class="scard-lbl" id="facultyReserveLabel">Course Reserve Drafts</div>
+            </div>
+            <div class="scard" style="animation-delay:.12s">
+              <div class="scard-top">
+                <div class="scard-ico" style="background:var(--amber-bg)">🛒</div>
+                <span class="scard-chip" id="facultyProcChip" style="background:var(--amber-bg);color:var(--amber)">No history</span>
+              </div>
+              <div class="scard-num" id="facultyProcCount">0</div>
+              <div class="scard-lbl" id="facultyProcLabel">Purchase Requests</div>
+            </div>
+            <div class="scard" style="animation-delay:.16s">
+              <div class="scard-top">
+                <div class="scard-ico" style="background:var(--teal-bg)">📈</div>
+                <span class="scard-chip" id="facultyCatalogChip" style="background:var(--teal-bg);color:var(--teal)">Live catalog</span>
+              </div>
+              <div class="scard-num" id="facultyCatalogCount">0</div>
+              <div class="scard-lbl" id="facultyCatalogLabel">Catalog Titles</div>
+            </div>
+          </div>
+
+          <div class="g-dash">
+            <!-- Left column -->
+            <div style="display:flex;flex-direction:column;gap:16px">
+
+              <!-- My Research Bookshelf -->
+              <div class="card">
+                <div class="card-hdr">
+                  <div>
+                    <div class="card-ttl">📖 My Research Bookshelf</div>
+                    <div class="card-sub" id="facultyBookshelfSub">0 live faculty loans</div>
+                  </div>
+                  <button class="btn btn-outline btn-sm"
+                    onclick="nav('department',document.querySelector('[data-sec=department]'))">View All →</button>
+                </div>
+                <div class="card-body">
+                  <div class="bookshelf-grid" id="bookshelfGrid"></div>
+                </div>
+              </div>
+
+              <!-- New Arrivals in My Department -->
+              <div class="card">
+                <div class="card-hdr">
+                  <div>
+                    <div class="card-ttl" id="facultyArrivalsTitle">🆕 Shared Catalog Snapshot</div>
+                    <div class="card-sub" id="facultyArrivalsSub">Live titles from the current database</div>
+                  </div>
+                  <button class="btn btn-outline btn-sm"
+                    onclick="nav('search',document.querySelector('[data-sec=search]'))">Browse All →</button>
+                </div>
+                <div class="card-body" style="padding-top:8px" id="arrivalsList"></div>
+              </div>
+
+              <!-- Reading activity chart -->
+              <div class="card">
+                <div class="card-hdr">
+                  <div class="card-ttl" id="facultyChartTitle">📊 Faculty Library Snapshot</div>
+                </div>
+                <div class="card-body">
+                  <div class="cw"><canvas id="actChart"></canvas></div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Right column -->
+            <div style="display:flex;flex-direction:column;gap:16px">
+
+              <!-- Student Activity Overview -->
+              <div class="card">
+                <div class="card-hdr">
+                  <div>
+                    <div class="card-ttl" id="facultyActivityTitle">📚 Catalog Activity</div>
+                    <div class="card-sub" id="facultyActivitySub">Top live catalog titles by available copies</div>
+                  </div>
+                </div>
+                <div class="card-body" style="padding-top:8px" id="studentActivity"></div>
+              </div>
+
+              <!-- Notifications -->
+              <div class="card">
+                <div class="card-hdr">
+                  <div class="card-ttl">🔔 Library Notifications</div>
+                </div>
+                <div class="card-body" style="padding-top:8px" id="notifFeed"></div>
+                <div class="card-foot">
+                  <button class="btn btn-outline btn-sm" onclick="markFacultyNotificationsRead()">Mark
+                    all read</button>
+                </div>
+              </div>
+
+              <!-- Quick actions -->
+              <div class="card">
+                <div class="card-hdr">
+                  <div class="card-ttl">⚡ Quick Actions</div>
+                </div>
+                <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
+                  <button class="btn btn-purple" style="width:100%;justify-content:flex-start"
+                    onclick="nav('reserves',document.querySelector('[data-sec=reserves]'))">📚 Create Course Reserve
+                    List</button>
+                  <button class="btn btn-ink" style="width:100%;justify-content:flex-start"
+                    onclick="nav('procurement',document.querySelector('[data-sec=procurement]'))">🛒 Request Book
+                    Purchase</button>
+                  <button class="btn btn-outline" style="width:100%;justify-content:flex-start"
+                    onclick="nav('bulk',document.querySelector('[data-sec=bulk]'))">📦 Submit Bulk Issue
+                    Request</button>
+                  <button class="btn btn-outline" style="width:100%;justify-content:flex-start"
+                    onclick="openFacultyStudentPreview()">👁 Preview Student
+                    View</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════ COURSE RESERVES ═══════════════════════ -->
+        <section class="section" id="sec-reserves">
+          <div class="sec-hdr">
+            <div>
+              <h2>Course Reserves Creator</h2>
+              <p>Build curated reading lists for your courses — students can view and request these books</p>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-outline" onclick="showExistingReserveLists()">📋 My Existing
+                Lists</button>
+              <button class="btn btn-purple" onclick="openPublishModal()">📢 Publish List</button>
+            </div>
+          </div>
+
+          <div class="reserves-split">
+            <!-- Left: Book Search -->
+            <div class="reserve-panel">
+              <div class="rp-head">
+                <h3>🔍 Search &amp; Add Books</h3>
+                <span style="font-size:.72rem;color:var(--smoke)">Click ＋ to add to reserve</span>
+              </div>
+              <div class="rp-body">
+                <div class="fg" style="margin-bottom:12px">
+                  <div style="position:relative">
+                    <span
+                      style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:.82rem;color:var(--ash)">🔍</span>
+                    <input class="fc" id="reserveSearch" style="padding-left:32px"
+                      placeholder="Search by title, author, or ISBN…" oninput="filterReserveSearch()">
+                  </div>
+                </div>
+                <div id="reserveSearchResults"></div>
+              </div>
+            </div>
+
+            <!-- Right: Reserve List Builder -->
+            <div class="reserve-panel">
+              <div class="rp-head">
+                <div>
+                  <h3>📋 Reading List</h3>
+                  <div style="font-size:.68rem;color:var(--smoke);margin-top:1px" id="listCourseName">Course: Untitled —
+                    Click to name</div>
+                </div>
+                <span class="pill p-purple" id="reserveCount">0 books</span>
+              </div>
+              <div class="rp-body">
+                <div class="fg">
+                  <input class="fc" id="courseNameInput" placeholder="Course name (e.g. Data Structures — CS302)"
+                    oninput="syncReserveDraftName(this.value)">
+                </div>
+
+                <!-- Drop zone / list -->
+                <div id="dropZone" class="drop-zone"
+                  ondragover="event.preventDefault();this.classList.add('drag-active')"
+                  ondragleave="this.classList.remove('drag-active')" ondrop="handleDrop(event)">
+                  <div class="drop-zone-icon">📚</div>
+                  <div class="drop-zone-txt">Drag books here or click ＋ from the search panel</div>
+                </div>
+
+                <div id="reserveList" style="display:none;flex-direction:column;gap:0;margin-bottom:12px"></div>
+
+                <div style="display:flex;gap:8px">
+                  <button class="btn btn-outline btn-sm" style="flex:1" onclick="clearReserve()">🗑 Clear</button>
+                  <button class="btn btn-purple btn-sm" style="flex:2" onclick="openPublishModal()">📢 Publish
+                    List</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Existing Reserve Lists -->
+          <div class="card" style="margin-top:16px">
+            <div class="card-hdr">
+              <div class="card-ttl">📋 My Published Reserve Lists</div>
+            </div>
+            <div class="tbl-wrap">
+              <table class="dtbl">
+                <thead>
+                  <tr>
+                    <th>Course Name</th>
+                    <th>Books</th>
+                    <th>Students Viewing</th>
+                    <th>Semester</th>
+                    <th>Status</th>
+                    <th style="text-align:right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="reserveListsTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════ ADVANCED SEARCH ═══════════════════════ -->
+        <section class="section" id="sec-search">
+          <div class="sec-hdr">
+            <div>
+              <h2>Advanced Catalog Search</h2>
+              <p>Full metadata search with Boolean operators · DOI · Citation data · Edition history</p>
+            </div>
+          </div>
+
+          <!-- Boolean search bar -->
+          <div
+            style="background:var(--ink);border-radius:var(--r-xl);padding:22px 26px;margin-bottom:20px;position:relative;overflow:hidden">
+            <div
+              style="position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(109,40,217,.25) 0%,transparent 70%)">
+            </div>
+            <div
+              style="font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(167,139,250,.7);margin-bottom:12px;position:relative;z-index:1">
+              Boolean Search — CS Faculty Mode</div>
+            <div style="position:relative;z-index:1;display:flex;gap:10px;flex-wrap:wrap">
+              <div style="flex:1;min-width:260px;position:relative">
+                <span
+                  style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:1rem;color:rgba(167,139,250,.5)">🔍</span>
+                <input id="boolSearch"
+                  style="width:100%;padding:14px 18px 14px 42px;background:rgba(255,255,255,.08);border:2px solid rgba(167,139,250,.2);border-radius:var(--r-lg);font-size:.9rem;font-family:var(--font-m);color:#fff;outline:none;transition:all .2s;caret-color:var(--P300)"
+                  placeholder='"data structures" AND edition:4 NOT "out of print"' oninput="doAdvSearch(this.value)">
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                <button class="btn btn-sm"
+                  style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.65)"
+                  onclick="insertBool('AND')">AND</button>
+                <button class="btn btn-sm"
+                  style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.65)"
+                  onclick="insertBool('OR')">OR</button>
+                <button class="btn btn-sm"
+                  style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.65)"
+                  onclick="insertBool('NOT')">NOT</button>
+                <button class="btn btn-purple btn-sm"
+                  onclick="doAdvSearch(document.getElementById('boolSearch').value)">Search →</button>
+              </div>
+            </div>
+            <div style="position:relative;z-index:1;margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+              <span style="font-size:.68rem;color:rgba(255,255,255,.3);align-self:center">Filter:</span>
+              <span class="stp active" onclick="setSearchType('all',this)" style="font-size:.7rem;padding:3px 11px">All
+                Types</span>
+              <span class="stp" onclick="setSearchType('textbook',this)" style="font-size:.7rem;padding:3px 11px">📖
+                Textbook</span>
+              <span class="stp" onclick="setSearchType('journal',this)" style="font-size:.7rem;padding:3px 11px">📰
+                Journal</span>
+              <span class="stp" onclick="setSearchType('reference',this)" style="font-size:.7rem;padding:3px 11px">📘
+                Reference</span>
+              <span class="stp" onclick="setSearchType('thesis',this)" style="font-size:.7rem;padding:3px 11px">🎓
+                Thesis</span>
+            </div>
+          </div>
+
+          <!-- Results -->
+          <div class="toolbar">
+            <span style="font-size:.78rem;color:var(--smoke)" id="searchCount">Showing all 12 books</span>
+            <div style="margin-left:auto;display:flex;gap:8px">
+              <select class="fsel" id="sortBy" onchange="doAdvSearch()">
+                <option>Relevance</option>
+                <option>Year (Newest)</option>
+                <option>Year (Oldest)</option>
+                <option>Title A–Z</option>
+                <option>Citation Count ↓</option>
+              </select>
+              <select class="fsel" id="availOnlyAdv">
+                <option>All Availability</option>
+                <option>Available Now</option>
+                <option>Faculty Accessible</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="tbl-wrap">
+              <table class="dtbl" id="searchTable">
+                <thead>
+                  <tr>
+                    <th>Book / Resource</th>
+                    <th>Type</th>
+                    <th>Edition</th>
+                    <th>DOI / ISBN</th>
+                    <th>Citations</th>
+                    <th>Year</th>
+                    <th>Availability</th>
+                    <th style="text-align:right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="searchTbody"></tbody>
+              </table>
+            </div>
+            <div class="card-foot">
+              <span style="font-size:.73rem;color:var(--smoke)" id="searchPaginInfo"></span>
+              <div style="margin-left:auto" class="pgn" id="searchPagination"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════ DEPARTMENT LIBRARY ═══════════════════════ -->
+        <section class="section" id="sec-department">
+          <div class="sec-hdr">
+            <div>
+              <h2>Departmental Library View</h2>
+              <p>All books currently held by Computer Science &amp; Engineering faculty and students</p>
+            </div>
+          </div>
+
+          <!-- Toggle -->
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap">
+            <div class="dept-toggle-row">
+              <button class="dept-tab active" onclick="switchDeptTab('faculty',this)">🎓 Faculty Holdings</button>
+              <button class="dept-tab" onclick="switchDeptTab('student',this)">🎒 Student Holdings</button>
+              <button class="dept-tab" onclick="switchDeptTab('overdue',this)">⏰ Overdue</button>
+            </div>
+            <div class="sf" style="max-width:260px">
+              <span class="si">🔍</span>
+              <input type="text" id="deptSearch" placeholder="Search dept books…" oninput="filterDept()">
+            </div>
+            <span style="font-size:.78rem;color:var(--smoke)" id="deptCount"></span>
+          </div>
+
+          <div class="card">
+            <div class="tbl-wrap">
+              <table class="dtbl">
+                <thead>
+                  <tr>
+                    <th>Book</th>
+                    <th>Held By</th>
+                    <th>Role</th>
+                    <th>Issued On</th>
+                    <th>Due Date</th>
+                    <th>Days Left</th>
+                    <th>Auto-Renew</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="deptTbody"></tbody>
+              </table>
+            </div>
+            <div class="card-foot">
+              <span style="font-size:.73rem;color:var(--smoke)" id="deptInfo"></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════ BULK ISSUE ═══════════════════════ -->
+        <section class="section" id="sec-bulk">
+          <div class="sec-hdr">
+            <div>
+              <h2>Bulk Issue Request</h2>
+              <p>Request multiple copies of a book to be moved to a specific lab or classroom for the semester</p>
+            </div>
+          </div>
+
+          <div class="bulk-split">
+            <!-- Left: Select Book -->
+            <div class="card">
+              <div class="card-hdr">
+                <div class="card-ttl">📖 Select Book</div>
+              </div>
+              <div class="card-body">
+                <div class="fg">
+                  <label class="flbl">Search Book <span>*</span></label>
+                  <div style="position:relative">
+                    <span
+                      style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:.82rem;color:var(--ash)">🔍</span>
+                    <input class="fc" id="bulkBookSearch" style="padding-left:32px"
+                      placeholder="Title, ISBN, or author…" oninput="filterBulkSearch()">
+                  </div>
+                </div>
+
+                <div id="bulkSearchResults"
+                  style="display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto;margin-bottom:12px">
+                </div>
+
+                <!-- Selected book preview -->
+                <div id="bulkSelectedBook"
+                  style="display:none;background:var(--P-bg);border:1.5px solid rgba(109,40,217,.2);border-radius:var(--r-lg);padding:12px">
+                  <div
+                    style="font-size:.65rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--P500);margin-bottom:6px">
+                    Selected Book</div>
+                  <div style="font-family:var(--font-d);font-size:.9rem;font-weight:700;color:var(--ink)"
+                    id="bulkBookTitle">—</div>
+                  <div style="font-size:.72rem;color:var(--smoke)" id="bulkBookMeta">—</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Request Details -->
+            <div class="card">
+              <div class="card-hdr">
+                <div class="card-ttl">📋 Request Details</div>
+              </div>
+              <div class="card-body">
+                <div class="fr">
+                  <div class="fg">
+                    <label class="flbl">Copies Needed <span>*</span></label>
+                    <input class="fc" type="number" id="bulkCopies" value="30" min="1" max="100">
+                  </div>
+                  <div class="fg">
+                    <label class="flbl">Semester Duration</label>
+                    <select class="fc" id="bulkSemester">
+                      <option>Full Semester (6 months)</option>
+                      <option>Half Semester (3 months)</option>
+                      <option>Custom Period</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="fg">
+                  <label class="flbl">Target Location <span>*</span></label>
+                  <select class="fc" id="bulkLocation">
+                    <option>CS Lab A – Block 3, Room 101</option>
+                    <option>CS Lab B – Block 3, Room 102</option>
+                    <option>Main Reading Room</option>
+                    <option>Seminar Hall – Block 4</option>
+                    <option>Faculty Office – CSE Dept</option>
+                  </select>
+                </div>
+
+                <div class="fg">
+                  <label class="flbl">Select Classes <span>*</span></label>
+                  <div class="class-list-grid" id="classListGrid"></div>
+                </div>
+
+                <div class="fg" style="margin-top:4px">
+                  <label class="flbl">Justification / Notes</label>
+                  <textarea class="fc" id="bulkNotes" rows="2"
+                    placeholder="Reason for bulk issue — lab course, project work, etc."></textarea>
+                </div>
+
+                <button class="btn btn-purple" style="width:100%;margin-top:4px" onclick="submitBulkRequest()">📦 Submit
+                  Bulk Request to Librarian</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════ PROCUREMENT ═══════════════════════ -->
+        <section class="section" id="sec-procurement">
+          <div class="sec-hdr">
+            <div>
+              <h2>Recommend a Purchase</h2>
+              <p>Submit a book procurement request to the Library — approved by Librarian and Admin</p>
+            </div>
+          </div>
+
+          <div class="g2" style="align-items:start">
+            <!-- Procurement Form -->
+            <div class="proc-form">
+              <h3>📬 New Purchase Recommendation</h3>
+              <p>Fill in the details below. The Librarian will review and forward to Admin for approval and budgeting.
+              </p>
+
+              <div class="fg">
+                <label class="flbl">Book Title <span>*</span></label>
+                <input class="fc" id="procTitle" placeholder="Full title of the book">
+              </div>
+              <div class="fr">
+                <div class="fg">
+                  <label class="flbl">Author(s) <span>*</span></label>
+                  <input class="fc" id="procAuthor" placeholder="Author name(s)">
+                </div>
+                <div class="fg">
+                  <label class="flbl">ISBN / DOI</label>
+                  <input class="fc" id="procIsbn" placeholder="978-…" style="font-family:var(--font-m)">
+                </div>
+              </div>
+              <div class="fr">
+                <div class="fg">
+                  <label class="flbl">Publisher</label>
+                  <input class="fc" id="procPub" placeholder="Publisher name">
+                </div>
+                <div class="fg">
+                  <label class="flbl">Publication Year</label>
+                  <input class="fc" type="number" id="procYear" placeholder="2024">
+                </div>
+              </div>
+              <div class="fr">
+                <div class="fg">
+                  <label class="flbl">Edition</label>
+                  <input class="fc" id="procEdition" placeholder="e.g. 4th Edition">
+                </div>
+                <div class="fg">
+                  <label class="flbl">Copies Required</label>
+                  <input class="fc" type="number" id="procCopies" value="3" min="1">
+                </div>
+              </div>
+              <div class="fg">
+                <label class="flbl">Department / Subject Area</label>
+                <select class="fc" id="procDept">
+                  <option>Computer Science & Engineering</option>
+                  <option>Electronics & Communication</option>
+                  <option>Mechanical Engineering</option>
+                  <option>Civil Engineering</option>
+                  <option>Mathematics</option>
+                  <option>General Reference</option>
+                </select>
+              </div>
+              <div class="fg">
+                <label class="flbl">Reason for Request <span>*</span></label>
+                <textarea class="fc" id="procReason" rows="3"
+                  placeholder="Why is this book needed? Is it for a new course, research, or to replace an outdated edition?"></textarea>
+              </div>
+
+              <!-- Impact estimator -->
+              <div class="fg" style="margin-bottom:0">
+                <label class="flbl">Estimated Student Impact <span>*</span></label>
+                <div class="impact-meter" id="impactMeter">
+                  <div class="impact-opt selected" onclick="selectImpact(this)">
+                    <div class="impact-ico">👥</div>
+                    <div class="impact-lbl">Low</div>
+                    <div class="impact-cnt">1–30 students</div>
+                  </div>
+                  <div class="impact-opt" onclick="selectImpact(this)">
+                    <div class="impact-ico">🎓</div>
+                    <div class="impact-lbl">Medium</div>
+                    <div class="impact-cnt">31–120 students</div>
+                  </div>
+                  <div class="impact-opt" onclick="selectImpact(this)">
+                    <div class="impact-ico">🏫</div>
+                    <div class="impact-lbl">High</div>
+                    <div class="impact-cnt">120+ students</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:10px;margin-top:16px">
+                <button class="btn btn-outline" onclick="clearProcForm()">Clear</button>
+                <button class="btn btn-purple btn-lg" style="flex:1" onclick="submitProc()">📬 Submit
+                  Recommendation</button>
+              </div>
+            </div>
+
+            <!-- Existing Requests -->
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div class="card">
+                <div class="card-hdr">
+                  <div class="card-ttl">📋 My Requests — Status Tracker</div>
+                </div>
+                <div class="card-body" id="procRequestsList"></div>
+              </div>
+
+              <!-- Policy info -->
+              <div class="card"
+                style="background:linear-gradient(135deg,var(--P-bg) 0%,rgba(109,40,217,.04) 100%);border-color:rgba(109,40,217,.15)">
+                <div class="card-hdr">
+                  <div class="card-ttl" style="color:var(--P600)">📜 Procurement Policy</div>
+                </div>
+                <div class="card-body">
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <div
+                      style="display:flex;justify-content:space-between;font-size:.8rem;padding:6px 0;border-bottom:1px solid var(--border)">
+                      <span style="color:var(--charcoal)">Review Time</span><span
+                        style="font-weight:700;color:var(--ink)">7–14 working days</span>
+                    </div>
+                    <div
+                      style="display:flex;justify-content:space-between;font-size:.8rem;padding:6px 0;border-bottom:1px solid var(--border)">
+                      <span style="color:var(--charcoal)">Max per Semester</span><span
+                        style="font-weight:700;color:var(--ink)">5 requests</span>
+                    </div>
+                    <div
+                      style="display:flex;justify-content:space-between;font-size:.8rem;padding:6px 0;border-bottom:1px solid var(--border)">
+                      <span style="color:var(--charcoal)">Budget per Dept</span><span
+                        style="font-weight:700;color:var(--ink)">₹50,000 / year</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:.8rem;padding:6px 0"><span
+                        style="color:var(--charcoal)">Approval Flow</span><span
+                        style="font-weight:700;color:var(--ink)">Faculty → Librarian → Admin</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- /content -->
+    </div><!-- /main -->
+  </div><!-- /app -->
+  <script src="api-client.js"></script>
+  <script src="auth-ui.js"></script>
+  <script src="profile-ui.js"></script>
+  <script src="portal-sync.js"></script>
+  <script src="faculty-workspace.js"></script>
+</body>
+
+</html>

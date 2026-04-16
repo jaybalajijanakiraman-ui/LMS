@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Librarian Desk — Vemu Library Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="librarian.css">
+</head>
+
+<body>
+
+  <!-- TOAST -->
+  <div class="toast-box" id="toastBox"></div>
+
+  <!-- ═══════ MODALS ═══════ -->
+
+  <!-- Fine Confirmation Modal -->
+  <div class="ovl" id="fineModal">
+    <div class="modal">
+      <div class="mhdr">
+        <h3>💰 Fine Confirmation</h3>
+        <button class="mcls" onclick="closeM('fineModal')">✕</button>
+      </div>
+      <div class="mbdy">
+        <div id="fineModalBody"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+          <div class="fg" style="margin:0">
+            <label class="flbl">Payment Mode</label>
+            <select class="fc" id="finePaymentMode">
+              <option value="">Select mode</option>
+              <option>Cash</option>
+              <option>UPI</option>
+              <option>Card</option>
+              <option>Bank Transfer</option>
+            </select>
+          </div>
+          <div class="fg" style="margin:0">
+            <label class="flbl">Receipt Number</label>
+            <input class="fc" id="fineReceiptNumber" placeholder="Optional receipt reference">
+          </div>
+        </div>
+      </div>
+      <div class="mftr">
+        <button class="btn btn-outline" onclick="waveFine()">🤝 Waive Fine</button>
+        <button class="btn btn-amber" onclick="addToLedger()">📒 Add to Ledger</button>
+        <button class="btn btn-emerald" onclick="payFine()">✅ Pay Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Discard Modal -->
+  <div class="ovl" id="discardModal">
+    <div class="modal">
+      <div class="mhdr">
+        <h3>🗑️ Mark Book as Lost / Damaged</h3>
+        <button class="mcls" onclick="closeM('discardModal')">✕</button>
+      </div>
+      <div class="mbdy">
+        <p style="font-size:.83rem;color:var(--slate-500);margin-bottom:16px;line-height:1.6">
+          This will reduce available copies and generate a loss entry in the admin report.
+          Select the reason below.
+        </p>
+        <div class="reason-opts" id="reasonOpts">
+          <label class="reason-opt" onclick="selectReason(this)"><input type="radio" name="reason" value="Lost"> 📦 Book
+            is Lost / Cannot be found</label>
+          <label class="reason-opt" onclick="selectReason(this)"><input type="radio" name="reason" value="Damaged"> 🔥
+            Book is Severely Damaged</label>
+          <label class="reason-opt" onclick="selectReason(this)"><input type="radio" name="reason" value="Worn"> 📄 Worn
+            Out — End of Life</label>
+          <label class="reason-opt" onclick="selectReason(this)"><input type="radio" name="reason" value="Other"> ❓
+            Other</label>
+        </div>
+        <div class="fg">
+          <label class="flbl">Additional Notes</label>
+          <textarea class="fc" id="discardNotes" rows="3"
+            placeholder="Describe the condition or circumstances…"></textarea>
+        </div>
+      </div>
+      <div class="mftr">
+        <button class="btn btn-outline" onclick="closeM('discardModal')">Cancel</button>
+        <button class="btn btn-danger" onclick="confirmDiscard()">⚠️ Confirm & Log Loss</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Waive Reason Modal -->
+  <div class="ovl" id="waiveModal">
+    <div class="modal">
+      <div class="mhdr">
+        <h3>🤝 Waive Fine — Reason Required</h3>
+        <button class="mcls" onclick="closeM('waiveModal')">✕</button>
+      </div>
+      <div class="mbdy">
+        <div class="fg">
+          <label class="flbl">Reason for Waiver *</label>
+          <select class="fc" id="waiveReason">
+            <option value="">Select a reason</option>
+            <option>Medical emergency</option>
+            <option>System downtime</option>
+            <option>First-time offender — goodwill</option>
+            <option>Faculty / Staff privilege</option>
+            <option>Other (admin approval required)</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="flbl">Notes</label>
+          <textarea class="fc" id="waiveNotes" rows="2" placeholder="Optional additional notes…"></textarea>
+        </div>
+      </div>
+      <div class="mftr">
+        <button class="btn btn-outline" onclick="closeM('waiveModal')">Cancel</button>
+        <button class="btn btn-emerald" onclick="confirmWaive()">✅ Confirm Waiver</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Book Modal -->
+  <div class="ovl" id="addBookModal">
+    <div class="modal modal-lg">
+      <div class="mhdr">
+        <h3>📖 Add New Book</h3>
+        <button class="mcls" onclick="closeM('addBookModal')">✕</button>
+      </div>
+      <div class="mbdy" id="addBookBody"></div>
+      <div class="mftr">
+        <button class="btn btn-outline" onclick="closeM('addBookModal')">Cancel</button>
+        <button class="btn btn-emerald" onclick="saveNewBook()">💾 Save to Inventory</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ovl" id="deskNotifModal">
+    <div class="modal modal-lg">
+      <div class="mhdr">
+        <h3>🔔 Desk Notifications</h3>
+        <button class="mcls" onclick="closeM('deskNotifModal')">✕</button>
+      </div>
+      <div class="mbdy" id="deskNotifBody"></div>
+      <div class="mftr">
+        <button class="btn btn-outline" onclick="closeM('deskNotifModal')">Close</button>
+        <button class="btn btn-slate"
+          onclick="nav('dashboard',document.querySelector('[data-sec=dashboard]'));closeM('deskNotifModal')">Open
+          Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ APP SHELL ═══════ -->
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <button class="sb-toggle" id="sbToggle" onclick="toggleSb()" title="Collapse">◀</button>
+      <div class="sb-head">
+        <div class="sb-logo">📚</div>
+        <div class="sb-brand">Vemu Library<small>Librarian Desk</small></div>
+      </div>
+      <nav class="sb-nav">
+        <div class="sb-label">Desk</div>
+        <div class="sb-link active" data-sec="dashboard" data-tip="Dashboard" onclick="nav('dashboard',this)">
+          <div class="ico">🏠</div><span class="lbl">Dashboard</span>
+        </div>
+        <div class="sb-label">Circulation</div>
+        <div class="sb-link" data-sec="circulation" data-tip="Circulation" onclick="nav('circulation',this)">
+          <div class="ico">🔄</div><span class="lbl">Circulation Hub</span>
+          <span class="sb-badge" id="badgeCirc">5</span>
+        </div>
+        <div class="sb-label">Catalog</div>
+        <div class="sb-link" data-sec="inventory" data-tip="Inventory" onclick="nav('inventory',this)">
+          <div class="ico">📖</div><span class="lbl">Inventory Manager</span>
+        </div>
+        <div class="sb-label">Reports</div>
+        <div class="sb-link" data-sec="reports" data-tip="Reports" onclick="nav('reports',this)">
+          <div class="ico">📊</div><span class="lbl">Reports & Logs</span>
+        </div>
+      </nav>
+      <div class="sb-foot">
+        <div class="sb-user">
+          <div class="sb-av">KD</div>
+          <div class="sb-uinfo">
+            <div class="sb-uname">Kavitha Devi</div>
+            <div class="sb-urole">Librarian · LIB-003</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main">
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="topbar-ttl">
+          <span id="tbIcon">🏠</span>
+          <span id="tbTitle">Librarian Desk</span>
+          <span class="topbar-bc" id="tbBc">/ Dashboard</span>
+        </div>
+        <div class="topbar-sp"></div>
+        <div class="topbar-kbd">
+          <span class="kbd">Alt</span>+<span class="kbd">S</span> Search &nbsp;
+          <span class="kbd">Alt</span>+<span class="kbd">I</span> Issue &nbsp;
+          <span class="kbd">Alt</span>+<span class="kbd">R</span> Return
+        </div>
+        <button class="topbar-btn" title="Notifications" onclick="showLibrarianNotificationsToast()">🔔<span
+            class="ndot"></span></button>
+        <button class="topbar-btn" title="Print Page" onclick="window.print()">🖨️</button>
+        <button class="topbar-btn" title="Logout" onclick="toast('info','Logging out…','👋')">🚪</button>
+      </header>
+
+      <!-- CONTENT -->
+      <div class="content" id="mainContent">
+
+        <!-- ═══════════════ DASHBOARD ═══════════════ -->
+        <section class="section active" id="sec-dashboard">
+
+          <!-- Omni Search -->
+          <div class="omni-wrap">
+            <div class="omni-label">
+              Omni Search
+              <span>Alt+S</span>
+            </div>
+            <div class="omni-field">
+              <span class="omni-ico">🔍</span>
+              <input class="omni-input" id="omniInput" placeholder="Scan ISBN · type Book Title · enter Student ID…"
+                oninput="handleOmni(this.value)"
+                onfocus="this.parentElement.querySelector('.omni-ico').style.opacity='1'" autocomplete="off">
+              <div class="omni-chips">
+                <span class="omni-chip">ISBN</span>
+                <span class="omni-chip">Title</span>
+                <span class="omni-chip">Student ID</span>
+              </div>
+            </div>
+            <div class="omni-results" id="omniResults"></div>
+            <div class="omni-hint">
+              <span>⏎ Search</span>
+              <span>↑↓ Navigate</span>
+              <span>Esc Clear</span>
+              <span>Auto-detects ISBN vs ID vs Title</span>
+            </div>
+          </div>
+
+          <!-- Quick Stats -->
+          <div class="stats-row">
+            <div class="scard">
+              <div class="scard-top">
+                <div class="scard-ico" style="background:var(--red-bg)">📅</div>
+                <span class="scard-chip" style="background:var(--red-bg);color:var(--red)">Urgent</span>
+              </div>
+              <div class="scard-num" id="s-due">12</div>
+              <div class="scard-lbl">Books Due Today</div>
+            </div>
+            <div class="scard">
+              <div class="scard-top">
+                <div class="scard-ico" style="background:var(--blue-bg)">📦</div>
+                <span class="scard-chip" style="background:var(--blue-bg);color:var(--blue)">Process</span>
+              </div>
+              <div class="scard-num" id="s-new">7</div>
+              <div class="scard-lbl">New Arrivals</div>
+            </div>
+            <div class="scard">
+              <div class="scard-top">
+                <div class="scard-ico" style="background:var(--amber-bg)">⚖️</div>
+                <span class="scard-chip" style="background:var(--amber-bg);color:var(--amber)">₹1,240</span>
+              </div>
+              <div class="scard-num" id="s-fine">24</div>
+              <div class="scard-lbl">Pending Fines</div>
+            </div>
+            <div class="scard">
+              <div class="scard-top">
+                <div class="scard-ico" style="background:var(--emerald-bg)">🔄</div>
+                <span class="scard-chip" style="background:var(--emerald-bg);color:var(--emerald)">Today</span>
+              </div>
+              <div class="scard-num" id="s-tx">38</div>
+              <div class="scard-lbl">Transactions Today</div>
+            </div>
+          </div>
+
+          <div class="insight-row" id="deskInsightRow"></div>
+
+          <!-- Main Grid -->
+          <div class="g-dash">
+
+            <!-- Left: Due Today + Quick Actions -->
+            <div style="display:flex;flex-direction:column;gap:16px">
+
+              <!-- Quick Action Cards -->
+              <div class="g2" style="margin-bottom:0">
+                <div class="card" style="cursor:pointer;border:2px solid transparent;transition:border-color .2s"
+                  onclick="nav('circulation',document.querySelector('[data-sec=circulation]'));setTimeout(()=>{setMode('issue')},100)">
+                  <div class="card-body" style="padding:20px;text-align:center">
+                    <div style="font-size:2.2rem;margin-bottom:8px">📤</div>
+                    <div style="font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--slate-900)">
+                      Issue Book</div>
+                    <div style="font-size:.75rem;color:var(--slate-400);margin-top:4px">Scan ID + ISBN to issue</div>
+                    <div style="margin-top:12px"><span class="kbd">Alt+I</span></div>
+                  </div>
+                </div>
+                <div class="card" style="cursor:pointer;transition:border-color .2s"
+                  onclick="nav('circulation',document.querySelector('[data-sec=circulation]'));setTimeout(()=>{setMode('return')},100)">
+                  <div class="card-body" style="padding:20px;text-align:center">
+                    <div style="font-size:2.2rem;margin-bottom:8px">📥</div>
+                    <div style="font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--slate-900)">
+                      Return Book</div>
+                    <div style="font-size:.75rem;color:var(--slate-400);margin-top:4px">Auto-calculates fines</div>
+                    <div style="margin-top:12px"><span class="kbd">Alt+R</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Due Today -->
+              <div class="card">
+                <div class="card-hdr">
+                  <div>
+                    <div class="card-ttl">📅 Due Today</div>
+                    <div class="card-sub">Books that must be returned by end of day</div>
+                  </div>
+                  <button class="btn btn-outline btn-sm" onclick="sendLibrarianReminders()">📧 Send Reminders</button>
+                </div>
+                <div class="card-body" id="dueList" style="padding-top:8px"></div>
+              </div>
+
+              <!-- Issue Chart -->
+              <div class="card">
+                <div class="card-hdr">
+                  <div class="card-ttl">📈 Today's Issue / Return Trend</div>
+                </div>
+                <div class="card-body">
+                  <div class="cw"><canvas id="dashChart"></canvas></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Recent Activity -->
+            <div class="card" style="align-self:flex-start;position:sticky;top:0">
+              <div class="card-hdr">
+                <div>
+                  <div class="card-ttl">⚡ Recent Activity</div>
+                  <div class="card-sub">Last 10 desk transactions</div>
+                </div>
+              </div>
+              <div class="card-body" style="padding-top:8px" id="recentFeed"></div>
+              <div class="card-foot">
+                <button class="btn btn-outline btn-sm" id="undoDeskBtn" onclick="undoLastDeskAction()">↩️ Undo
+                  Last</button>
+                <button class="btn btn-outline btn-sm" style="margin-left:auto"
+                  onclick="nav('reports',document.querySelector('[data-sec=reports]'))">Full Log →</button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ═══════════════ CIRCULATION HUB ═══════════════ -->
+        <section class="section" id="sec-circulation">
+          <div class="sec-hdr">
+            <div>
+              <h2>Circulation Hub</h2>
+              <p>Split-screen issue & return desk — scan Student ID then Book ISBNs</p>
+            </div>
+            <div style="display:flex;gap:8px">
+              <div class="mode-toggle">
+                <button class="mode-btn issue active" id="mBtnIssue" onclick="setMode('issue')">📤 Issue Mode</button>
+                <button class="mode-btn ret" id="mBtnReturn" onclick="setMode('return')">📥 Return Mode</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="circ-split">
+
+            <!-- LEFT: Student Panel -->
+            <div class="circ-panel">
+              <div class="circ-panel-ttl">👤 Student / Faculty Lookup</div>
+
+              <!-- Scan Student ID -->
+              <div>
+                <div
+                  style="font-size:.7rem;font-weight:700;color:var(--slate-500);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px">
+                  Scan or Enter User ID</div>
+                <div style="position:relative">
+                  <span
+                    style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:.9rem;color:var(--slate-400);pointer-events:none">🪪</span>
+                  <input class="fc" id="studentIdInput"
+                    style="padding-left:36px;font-family:var(--font-mono);font-weight:700" placeholder="e.g. 22VR1A0501"
+                    onkeydown="if(event.key==='Enter')lookupStudent(this.value)">
+                </div>
+                <button class="btn btn-slate btn-sm" style="margin-top:8px;width:100%"
+                  onclick="lookupStudent(document.getElementById('studentIdInput').value)">🔍 Look Up</button>
+              </div>
+
+              <!-- User Info Card -->
+              <div id="userInfoCard">
+                <div style="text-align:center;padding:20px;color:var(--slate-300)">
+                  <div style="font-size:2.5rem;margin-bottom:8px">👤</div>
+                  <div style="font-size:.83rem">Enter a student/faculty ID to view details</div>
+                </div>
+              </div>
+
+              <!-- Books Currently Held -->
+              <div id="booksHeldSection" style="display:none">
+                <div
+                  style="font-size:.72rem;font-weight:700;color:var(--slate-500);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">
+                  Books Currently Held</div>
+                <div id="booksHeldList" class="scanned-list"></div>
+              </div>
+
+              <div id="memberHistorySection" style="display:none">
+                <div
+                  style="font-size:.72rem;font-weight:700;color:var(--slate-500);letter-spacing:.06em;text-transform:uppercase;margin:12px 0 8px">
+                  Member Activity Snapshot</div>
+                <div class="history-grid">
+                  <div class="card">
+                    <div class="card-hdr">
+                      <div class="card-ttl">History</div>
+                    </div>
+                    <div class="card-body mini-list" id="memberHistoryList"></div>
+                  </div>
+                  <div class="card">
+                    <div class="card-hdr">
+                      <div class="card-ttl">Fines</div>
+                    </div>
+                    <div class="card-body mini-list" id="memberFineList"></div>
+                  </div>
+                  <div class="card">
+                    <div class="card-hdr">
+                      <div class="card-ttl">Reminders</div>
+                    </div>
+                    <div class="card-body mini-list" id="memberReminderList"></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- RIGHT: Book Scan Panel -->
+            <div class="circ-panel">
+              <div class="circ-panel-ttl" id="bookPanelTitle">📤 Scan Books to Issue</div>
+
+              <!-- Mode info banner -->
+              <div id="modeBanner"
+                style="background:var(--emerald-bg);border:1px solid var(--emerald);border-radius:var(--r-md);padding:10px 14px;font-size:.8rem;font-weight:600;color:var(--emerald-dark)">
+                📤 Issue Mode: Scan ISBNs below to add books to this transaction
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+                <div class="fg" style="margin:0">
+                  <label class="flbl">Issue Due Date</label>
+                  <input class="fc" id="issueDueDate" type="date">
+                </div>
+                <div style="display:flex;align-items:end">
+                  <div
+                    style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:var(--surface-2);font-size:.76rem;color:var(--slate-500)">
+                    Queue summary and due-date override apply to live issue records.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Scan Zone -->
+              <div>
+                <div
+                  style="font-size:.7rem;font-weight:700;color:var(--slate-500);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px">
+                  Scan Book ISBN</div>
+                <div class="scan-zone" id="scanZone" onclick="document.getElementById('isbnInput').focus()">
+                  <div class="scan-icon" id="scanZoneIcon">⬛</div>
+                  <div class="scan-label">Click here, then scan barcode or type ISBN</div>
+                  <input id="isbnInput" style="position:absolute;opacity:0;width:1px" autocomplete="off"
+                    onkeydown="if(event.key==='Enter')processIsbn(this.value)"
+                    onfocus="document.getElementById('scanZone').classList.add('scanning')"
+                    onblur="document.getElementById('scanZone').classList.remove('scanning')">
+                </div>
+                <div style="display:flex;gap:8px;margin-top:8px">
+                  <input class="fc" id="manualIsbn" style="font-family:var(--font-mono);flex:1"
+                    placeholder="Or type ISBN manually…" autocomplete="off">
+                  <button class="btn btn-slate btn-sm"
+                    onclick="processIsbn(document.getElementById('manualIsbn').value)">Add</button>
+                </div>
+              </div>
+
+              <!-- Scanned Books -->
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                  <div
+                    style="font-size:.72rem;font-weight:700;color:var(--slate-500);letter-spacing:.06em;text-transform:uppercase">
+                    Queued Books</div>
+                  <button class="btn btn-outline btn-sm" onclick="clearQueue()">🗑 Clear All</button>
+                </div>
+                <div id="scannedList" class="scanned-list">
+                  <div style="text-align:center;padding:20px;color:var(--slate-300);font-size:.83rem">
+                    No books scanned yet
+                  </div>
+                </div>
+              </div>
+
+              <!-- Feedback area -->
+              <div id="circFeedback"></div>
+
+              <!-- Confirm Button -->
+              <button class="btn btn-emerald btn-lg" style="width:100%;margin-top:auto" id="confirmTxBtn"
+                onclick="confirmTransaction()" disabled style="opacity:.5">
+                ✅ Confirm Transaction
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════ INVENTORY ═══════════════ -->
+        <section class="section" id="sec-inventory">
+          <div class="sec-hdr">
+            <div>
+              <h2>Inventory Manager</h2>
+              <p>Scanner-mode quick add · Edit · Mark as Lost/Damaged</p>
+            </div>
+            <button class="btn btn-emerald" onclick="openAddBook()">＋ Add Book (Scanner)</button>
+          </div>
+
+          <!-- Scanner Add Panel -->
+          <div class="inv-scan-wrap">
+            <div class="inv-scan-ttl">
+              <span>📡 Quick-Add Scanner Mode</span>
+              <button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);border:none"
+                onclick="clearScannerFields()">✕ Clear</button>
+            </div>
+            <div class="scanner-label">ISBN — Scan Barcode or Type</div>
+            <div class="scanner-field">
+              <span style="font-size:1.2rem;flex-shrink:0">⬛</span>
+              <input id="invIsbn" placeholder="Awaiting scan…" autocomplete="off"
+                oninput="if(this.value.length>=10)autoFillBook(this.value)"
+                onkeydown="if(event.key==='Enter')autoFillBook(this.value)">
+              <div class="scanner-cursor"></div>
+            </div>
+            <div class="inv-filled-grid" id="invFilledGrid">
+              <div class="ifield">
+                <div class="if-lbl">Title</div>
+                <div class="if-val empty" id="if-title">— Awaiting scan —</div>
+              </div>
+              <div class="ifield">
+                <div class="if-lbl">Author</div>
+                <div class="if-val empty" id="if-author">— Awaiting scan —</div>
+              </div>
+              <div class="ifield">
+                <div class="if-lbl">Publisher</div>
+                <div class="if-val empty" id="if-publisher">— Awaiting scan —</div>
+              </div>
+              <div class="ifield">
+                <div class="if-lbl">Category</div>
+                <div class="if-val empty" id="if-category">— Awaiting scan —</div>
+              </div>
+              <div class="ifield" id="if-edition-wrap">
+                <div class="if-lbl">Edition <span style="color:var(--amber)">★ Manual</span></div><input class="fc"
+                  id="if-edition"
+                  style="margin-top:4px;background:rgba(255,255,255,.08);border-color:rgba(245,158,11,.4);color:#fff"
+                  placeholder="e.g. 4th Edition">
+              </div>
+              <div class="ifield" id="if-shelf-wrap">
+                <div class="if-lbl">Shelf Location <span style="color:var(--amber)">★ Manual</span></div><input
+                  class="fc" id="if-shelf"
+                  style="margin-top:4px;background:rgba(255,255,255,.08);border-color:rgba(245,158,11,.4);color:#fff"
+                  placeholder="e.g. A-2-S-3">
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:16px">
+              <button class="btn btn-emerald" id="invAddBtn" onclick="addFromScanner()" disabled style="opacity:.4">📚
+                Add to Inventory</button>
+              <button class="btn btn-outline"
+                style="background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.1)"
+                onclick="openAddBook()">✏️ Full Form</button>
+            </div>
+          </div>
+
+          <!-- Filter Toolbar -->
+          <div class="toolbar">
+            <div class="sf">
+              <span class="si">🔍</span>
+              <input type="text" placeholder="Search title, author, ISBN…" id="invSearch" oninput="filterInv()">
+            </div>
+            <select class="fsel" id="invCatF" onchange="filterInv()">
+              <option value="">All Categories</option>
+              <option>Computer Science</option>
+              <option>Electronics</option>
+              <option>Mathematics</option>
+              <option>Management</option>
+              <option>Physics</option>
+              <option>General Fiction</option>
+            </select>
+            <select class="fsel" id="invStatF" onchange="filterInv()">
+              <option value="">All Status</option>
+              <option>Available</option>
+              <option>Loaned</option>
+              <option>Archived</option>
+            </select>
+            <span style="font-size:.78rem;color:var(--slate-400)" id="invCount"></span>
+          </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin:-2px 0 14px">
+            <button class="btn btn-outline btn-sm" onclick="runBulkInventoryAction('archive')">📦 Archive
+              Filtered</button>
+            <button class="btn btn-outline btn-sm" onclick="runBulkInventoryAction('restore')">♻️ Restore
+              Filtered</button>
+            <button class="btn btn-outline btn-sm" onclick="runBulkInventoryAction('move')">📍 Move Filtered
+              Shelf</button>
+            <button class="btn btn-outline btn-sm" onclick="runBulkInventoryAction('categorize')">🏷️
+              Re-Categorize</button>
+          </div>
+
+          <div class="card">
+            <div class="tbl-wrap">
+              <table class="dtbl">
+                <thead>
+                  <tr>
+                    <th>Book</th>
+                    <th>ISBN</th>
+                    <th>Category</th>
+                    <th>Total / Avail</th>
+                    <th>Location</th>
+                    <th>Condition</th>
+                    <th>Status</th>
+                    <th style="text-align:right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="invTbody"></tbody>
+              </table>
+            </div>
+            <div class="card-foot">
+              <span style="font-size:.75rem;color:var(--slate-400)" id="invPaginInfo"></span>
+              <div style="margin-left:auto" class="pgn" id="invPagination"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════ REPORTS ═══════════════ -->
+        <section class="section" id="sec-reports">
+          <div class="sec-hdr">
+            <div>
+              <h2>Reports & Daily Logs</h2>
+              <p>Issue/Return history, fines, and inventory changes</p>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-outline" onclick="exportLibrarianCsv()">📥 Export CSV</button>
+              <button class="btn btn-blue print-ok" onclick="window.print()">🖨️ Print to PDF</button>
+            </div>
+          </div>
+
+          <!-- Date Filters -->
+          <div class="rpt-filters">
+            <div class="date-pills">
+              <div class="dpill active" onclick="selDP(this,'today')">Today</div>
+              <div class="dpill" onclick="selDP(this,'7d')">Last 7 Days</div>
+              <div class="dpill" onclick="selDP(this,'30d')">This Month</div>
+              <div class="dpill" onclick="selDP(this,'custom')">Custom Range</div>
+            </div>
+            <input type="date" class="fsel" id="rptFrom" style="font-size:.78rem">
+            <span style="font-size:.78rem;color:var(--slate-400)">to</span>
+            <input type="date" class="fsel" id="rptTo" style="font-size:.78rem">
+            <select class="fsel" id="rptType" onchange="filterRpt()">
+              <option value="">All Types</option>
+              <option value="Issued">Issued</option>
+              <option value="Renewed">Renewed</option>
+              <option value="Returned">Returned</option>
+              <option value="Fine Paid">Fine Paid</option>
+              <option value="Fine Ledger">Fine Ledger</option>
+              <option value="Fine Waived">Fine Waived</option>
+              <option value="Reminder">Reminder</option>
+              <option value="Inventory">Inventory</option>
+              <option value="Lost">Lost / Damaged</option>
+            </select>
+          </div>
+
+          <!-- Summary Cards -->
+          <div class="g3" style="margin-bottom:18px">
+            <div class="card">
+              <div class="card-body" style="display:flex;align-items:center;gap:14px">
+                <div style="font-size:2rem">📤</div>
+                <div>
+                  <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--slate-900)"
+                    id="rTotalIssue">38</div>
+                  <div style="font-size:.75rem;color:var(--slate-500)">Issued Today</div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body" style="display:flex;align-items:center;gap:14px">
+                <div style="font-size:2rem">📥</div>
+                <div>
+                  <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--slate-900)"
+                    id="rTotalReturn">31</div>
+                  <div style="font-size:.75rem;color:var(--slate-500)">Returned Today</div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body" style="display:flex;align-items:center;gap:14px">
+                <div style="font-size:2rem">⚖️</div>
+                <div>
+                  <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--red)"
+                    id="rTotalFine">₹320</div>
+                  <div style="font-size:.75rem;color:var(--slate-500)">Fines Collected</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart -->
+          <div class="g2" style="margin-bottom:18px">
+            <div class="card">
+              <div class="card-hdr">
+                <div class="card-ttl">📈 Hourly Activity (Today)</div>
+              </div>
+              <div class="card-body">
+                <div class="cw"><canvas id="rptChart"></canvas></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-hdr">
+                <div class="card-ttl">📊 Transaction Breakdown</div>
+              </div>
+              <div class="card-body">
+                <div class="cw"><canvas id="rptPie" style="max-height:220px"></canvas></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Log Table -->
+          <div class="card" id="printableLog">
+            <div class="card-hdr" style="margin-bottom:0">
+              <div>
+                <div class="card-ttl">📋 Daily Issue / Return Log</div>
+                <div class="card-sub" id="logDate"></div>
+              </div>
+              <div class="sf" style="max-width:220px;margin-bottom:0">
+                <span class="si">🔍</span>
+                <input type="text" placeholder="Filter log…" id="rptSearch" oninput="filterRpt()">
+              </div>
+            </div>
+            <div class="tbl-wrap">
+              <table class="dtbl">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>User</th>
+                    <th>Book</th>
+                    <th>Type</th>
+                    <th>Due Date</th>
+                    <th>Fine (₹)</th>
+                    <th>Librarian</th>
+                  </tr>
+                </thead>
+                <tbody id="rptTbody"></tbody>
+              </table>
+            </div>
+            <div class="card-foot">
+              <span style="font-size:.75rem;color:var(--slate-400)" id="rptCount"></span>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- /content -->
+    </div><!-- /main -->
+  </div><!-- /app -->
+
+  <script src="librarian.js">
+  </script>
+  <script src="api-client.js"></script>
+  <script src="auth-ui.js"></script>
+  <script src="profile-ui.js"></script>
+  <script src="portal-sync.js"></script>
+</body>
+
+</html>
